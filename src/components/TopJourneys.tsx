@@ -32,17 +32,6 @@ function ArrowIcon() {
   );
 }
 
-/* Route icon: works for every route, not only airport transfers */
-function RouteIcon() {
-  return (
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-      <circle cx="6" cy="5" r="2.2" />
-      <circle cx="18" cy="19" r="2.2" />
-      <path d="M8.2 5H14a3.5 3.5 0 010 7h-4a3.5 3.5 0 000 7h5.8" />
-    </svg>
-  );
-}
-
 const STYLES = `
   @import url('https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700;12..96,800&family=Figtree:wght@400;500;600;700&display=swap');
 
@@ -71,11 +60,11 @@ const STYLES = `
   }
   .journeys-shell {
     position: relative; z-index: 1; max-width: 1440px; margin: 0 auto;
-    display: grid; grid-template-columns: minmax(250px, 1fr) repeat(4, minmax(160px, 1fr)); gap: 16px; align-items: center;
+    display: grid; grid-template-columns: minmax(250px, 1fr) repeat(4, minmax(170px, 1fr)); gap: 16px; align-items: stretch;
   }
 
   /* ── Copy ── */
-  .journeys-copy { padding: 4px 18px 4px 0; }
+  .journeys-copy { align-self: center; padding: 4px 18px 4px 0; }
   .journeys-kicker {
     display: inline-block; margin-bottom: 14px; padding: 5px 14px; border-radius: 100px; font-size: 13.5px; font-weight: 600; color: #fff;
     background: linear-gradient(135deg, rgba(255,255,255,.26), rgba(255,255,255,.08));
@@ -91,25 +80,45 @@ const STYLES = `
   }
   .journeys-all:hover { gap: 12px; background: linear-gradient(180deg, #ffbf40, #d98f0a); transform: translateY(-2px); }
 
-  /* ── Route cards: frosted white, like the booking card ── */
+  /* ── Route cards: frosted white, route is the hero ── */
   .journey-card {
-    position: relative; min-width: 0; display: flex; flex-direction: column; padding: 7px 7px 14px; border-radius: 22px; text-decoration: none; color: var(--h-ink);
+    position: relative; min-width: 0; display: flex; flex-direction: column; padding: 7px 7px 16px; border-radius: 22px; text-decoration: none; color: var(--h-ink);
     background: linear-gradient(135deg, rgba(255,255,255,.97), rgba(255,255,255,.88)); border: 1px solid rgba(255,255,255,.9);
     box-shadow: 0 18px 40px rgba(2,24,20,.3), 0 3px 8px rgba(2,24,20,.12);
     transition: transform .25s var(--h-ease), box-shadow .25s var(--h-ease);
   }
   .journey-card:hover { transform: translateY(-5px); box-shadow: 0 26px 52px rgba(2,24,20,.38), 0 4px 10px rgba(2,24,20,.14); }
-  .journey-image { display: block; width: 100%; height: 84px; margin-bottom: 12px; border-radius: 16px; background-image: url('/images/banner.webp'); background-size: cover; background-position: center; }
+  .journey-image { display: block; width: 100%; height: 64px; margin-bottom: 16px; border-radius: 16px; background-image: url('/images/banner.webp'); background-size: cover; background-position: center; }
   .journey-card:nth-child(2) .journey-image { background-position: 18% 55%; }
   .journey-card:nth-child(3) .journey-image { background-position: 43% 65%; }
   .journey-card:nth-child(4) .journey-image { background-position: 67% 48%; }
   .journey-card:nth-child(5) .journey-image { background-position: 88% 54%; }
-  .journey-body { display: flex; flex-direction: column; flex: 1; padding: 0 8px; }
-  .journey-route { display: flex; align-items: flex-start; gap: 8px; min-height: 42px; font-size: 14.5px; font-weight: 700; line-height: 1.35; }
-  .journey-route svg { flex: 0 0 auto; margin-top: 2px; color: var(--h-teal); }
-  .journey-foot { display: flex; align-items: flex-end; justify-content: space-between; gap: 10px; margin-top: 10px; padding-top: 10px; border-top: 1px solid rgba(16,36,31,.1); }
-  .journey-from { display: block; font-size: 13px; font-weight: 600; color: var(--h-ink-faint); line-height: 1.2; }
-  .journey-price { display: block; margin-top: 2px; font-family: 'Bricolage Grotesque', sans-serif; font-size: 28px; font-weight: 800; letter-spacing: -.02em; line-height: 1; color: var(--h-teal-deep); font-variant-numeric: tabular-nums; }
+  .journey-body { display: flex; flex-direction: column; flex: 1; padding: 0 12px; }
+
+  /* Route: origin and destination stacked, joined by a dotted line */
+  .journey-route { position: relative; display: flex; flex-direction: column; gap: 14px; padding-left: 28px; margin-bottom: 18px; }
+  .journey-stop { position: relative; display: block; min-width: 0; }
+  .journey-stop::before {
+    content: ""; position: absolute; left: -28px; top: 18px; width: 14px; height: 14px; border-radius: 50%;
+    background: #fff; border: 3px solid var(--h-teal);
+  }
+  .journey-stop:last-child::before {
+    background: var(--h-sun); border-color: var(--h-sun-deep);
+    box-shadow: 0 0 0 4px rgba(244,182,61,.28);
+  }
+  .journey-stop:first-child::after {
+    content: ""; position: absolute; left: -22px; top: 36px; height: calc(100% - 4px); width: 0;
+    border-left: 2px dotted rgba(11,107,90,.5);
+  }
+  .journey-stop-label { display: block; font-size: 12.5px; font-weight: 600; line-height: 1.2; color: var(--h-ink-faint); }
+  .journey-stop-name {
+    display: block; margin-top: 3px; font-family: 'Bricolage Grotesque', sans-serif; font-size: 18px; font-weight: 700;
+    letter-spacing: -.01em; line-height: 1.2; overflow-wrap: anywhere;
+  }
+
+  .journey-foot { display: flex; align-items: flex-end; justify-content: space-between; gap: 10px; margin-top: auto; padding-top: 12px; border-top: 1px solid rgba(16,36,31,.1); }
+  .journey-from { display: block; font-size: 12.5px; font-weight: 600; color: var(--h-ink-faint); line-height: 1.2; }
+  .journey-price { display: block; margin-top: 2px; font-family: 'Bricolage Grotesque', sans-serif; font-size: 24px; font-weight: 800; letter-spacing: -.02em; line-height: 1; color: var(--h-teal-deep); font-variant-numeric: tabular-nums; }
   .journey-go {
     flex-shrink: 0; width: 36px; height: 36px; border-radius: 50%; display: grid; place-items: center; color: #fff;
     background: linear-gradient(180deg, #11806b, var(--h-teal-deep)); box-shadow: 0 6px 14px rgba(8,76,64,.35), inset 0 1px 0 rgba(255,255,255,.25);
@@ -119,7 +128,7 @@ const STYLES = `
 
   /* ── Loading placeholders ── */
   .journey-skel {
-    height: 204px; border-radius: 22px; border: 1px solid rgba(255,255,255,.35);
+    min-height: 250px; border-radius: 22px; border: 1px solid rgba(255,255,255,.35);
     background: linear-gradient(100deg, rgba(255,255,255,.14) 30%, rgba(255,255,255,.3) 50%, rgba(255,255,255,.14) 70%);
     background-size: 200% 100%; animation: journey-shimmer 1.4s linear infinite;
   }
@@ -211,13 +220,27 @@ export default function TopJourneys() {
           });
 
           return (
-            <Link key={`${journey.fromLocId}-${journey.toLocId}`} href={`/reservation?${params.toString()}`} className="journey-card">
+            <Link
+              key={`${journey.fromLocId}-${journey.toLocId}`}
+              href={`/reservation?${params.toString()}`}
+              className="journey-card"
+              aria-label={`${journey.from} to ${journey.to}, from ${CURRENCY}${journey.price}`}
+            >
               <span className="journey-image" aria-hidden="true" />
               <span className="journey-body">
-                <span className="journey-route"><RouteIcon />{journey.from} → {journey.to}</span>
+                <span className="journey-route">
+                  <span className="journey-stop">
+                    <span className="journey-stop-label">From</span>
+                    <span className="journey-stop-name">{journey.from}</span>
+                  </span>
+                  <span className="journey-stop">
+                    <span className="journey-stop-label">To</span>
+                    <span className="journey-stop-name">{journey.to}</span>
+                  </span>
+                </span>
                 <span className="journey-foot">
                   <span>
-                    <span className="journey-from">From</span>
+                    <span className="journey-from">Fare from</span>
                     <span className="journey-price">{CURRENCY}{journey.price}</span>
                   </span>
                   <span className="journey-go" aria-hidden="true"><ArrowIcon /></span>

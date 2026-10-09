@@ -3,7 +3,7 @@ import type { ReactNode } from "react";
 /* ─────────────────────────────────────────────
    Edit the text here. Icons are a matched set of
    inline SVGs (same grid, stroke weight and style),
-   shown inside a soft gold badge.
+   shown inside glossy teal "jelly" badges.
    ───────────────────────────────────────────── */
 type Item = { title: string; sub: string; icon: ReactNode };
 
@@ -13,7 +13,7 @@ const svgProps = {
   viewBox: "0 0 24 24",
   fill: "none",
   stroke: "currentColor",
-  strokeWidth: 1.75,
+  strokeWidth: 2,
   strokeLinecap: "round" as const,
   strokeLinejoin: "round" as const,
   "aria-hidden": true,
@@ -88,65 +88,79 @@ const ITEMS: Item[] = [
 ];
 
 const STYLES = `
-  .trust-bar {
-    --t-navy:  #0f2a4d;
-    --t-blue:  #4a6488;
-    --t-gold:  #b7791f;
-    --t-line:  rgba(15,42,77,.12);
+  @import url('https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700;12..96,800&family=Figtree:wght@400;500;600;700&display=swap');
 
-    position: relative;
-    margin-top: 96px;
-    background: transparent;
-    padding: 26px 20px;
-    font-family: 'Inter', system-ui, sans-serif;
-    color: var(--t-navy);
+  .trust-bar {
+    --h-ink:       #10241f;
+    --h-ink-soft:  rgba(16,36,31,.82);
+    --h-teal:      #0b6b5a;
+    --h-teal-deep: #084c40;
+    --h-sun:       #f4b63d;
+    --h-line:      rgba(16,36,31,.12);
+
+    position: relative; overflow: hidden; padding: 56px 5vw;
+    font-family: 'Figtree', system-ui, sans-serif; color: var(--h-ink);
+    background: #fff;
   }
   .trust-bar *, .trust-bar *::before, .trust-bar *::after { box-sizing: border-box; }
 
+  /* ── One frosted panel, six columns ── */
   .trust-list {
-    max-width: 1320px; margin: 0 auto; padding: 0; list-style: none;
+    position: relative; overflow: hidden; max-width: 1320px; margin: 0 auto; padding: 26px 8px; list-style: none;
+    border-radius: 26px;
     display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); align-items: center;
+    background: #fff;
+    border: 1px solid rgba(16,36,31,.08);
+    box-shadow: 0 22px 48px rgba(10,30,45,.12), 0 3px 10px rgba(10,30,45,.06);
   }
-  .trust-item {
-    display: flex; align-items: center; gap: 12px;
-    padding: 4px 16px; min-width: 0;
+  .trust-list::before {
+    content: ""; position: absolute; left: 0; right: 0; top: 0; height: 4px;
+    background: linear-gradient(90deg, var(--h-teal-deep), var(--h-teal) 55%, var(--h-sun));
   }
-  .trust-item + .trust-item { border-left: 1px solid var(--t-line); }
+  .trust-item { display: flex; align-items: center; gap: 12px; padding: 6px 16px; min-width: 0; }
+  .trust-item + .trust-item { border-left: 1px solid var(--h-line); }
 
+  /* ── Glossy teal "jelly" badge ── */
   .trust-icon {
-    flex-shrink: 0;
-    width: 48px; height: 48px;
-    display: flex; align-items: center; justify-content: center;
-    border-radius: 14px;
-    color: var(--t-gold);
-    background: rgba(183,121,31,.10);
-    border: 1px solid rgba(183,121,31,.18);
+    flex-shrink: 0; position: relative; overflow: hidden;
+    width: 48px; height: 48px; border-radius: 50%; display: grid; place-items: center; color: #fff;
+    background: linear-gradient(180deg, #11806b, var(--h-teal-deep));
+    box-shadow: 0 8px 18px rgba(8,76,64,.32), inset 0 1.5px 0 rgba(255,255,255,.35);
   }
-  .trust-icon svg { width: 24px; height: 24px; }
+  .trust-icon::before {
+    content: ""; position: absolute; left: 10%; right: 10%; top: 3%; height: 46%; border-radius: 50%;
+    background: linear-gradient(180deg, rgba(255,255,255,.4), rgba(255,255,255,0)); pointer-events: none;
+  }
+  .trust-icon svg { position: relative; width: 24px; height: 24px; }
 
   .trust-text { display: flex; flex-direction: column; gap: 3px; min-width: 0; }
-  .trust-title { font-size: 14px; font-weight: 700; line-height: 1.25; color: var(--t-navy); }
-  .trust-sub   { font-size: 12.5px; font-weight: 500; line-height: 1.3; color: var(--t-blue); }
+  .trust-title { font-family: 'Bricolage Grotesque', sans-serif; font-size: 15.5px; font-weight: 700; letter-spacing: -.01em; line-height: 1.2; color: var(--h-ink); }
+  .trust-sub   { font-size: 13.5px; font-weight: 500; line-height: 1.35; color: var(--h-ink-soft); }
 
   /* ── Responsive ── */
-  @media (max-width: 1099px) {
-    .trust-bar { margin-top: 80px; }
-    .trust-list { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px 0; }
-    .trust-item { padding: 4px 22px; }
+  @media (max-width: 1199px) {
+    .trust-list { grid-template-columns: repeat(3, minmax(0, 1fr)); padding: 12px 8px; }
+    .trust-item { padding: 18px 22px; }
     .trust-item + .trust-item { border-left: none; }
-    .trust-item:not(:nth-child(3n+1)) { border-left: 1px solid var(--t-line); }
+    .trust-item:not(:nth-child(3n+1)) { border-left: 1px solid var(--h-line); }
+    .trust-item:nth-child(n+4) { border-top: 1px solid var(--h-line); }
   }
   @media (max-width: 699px) {
-    .trust-bar { margin-top: 64px; padding: 22px 16px; }
-    .trust-list { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px 12px; }
-    .trust-item { padding: 0 4px; }
-    .trust-item:not(:nth-child(3n+1)) { border-left: none; }
-    .trust-icon { width: 42px; height: 42px; border-radius: 12px; }
-    .trust-icon svg { width: 22px; height: 22px; }
-    .trust-title { font-size: 13.5px; }
+    .trust-bar { padding: 44px 4vw; }
+    .trust-list { grid-template-columns: repeat(2, minmax(0, 1fr)); border-radius: 22px; }
+    .trust-item, .trust-item + .trust-item, .trust-item:not(:nth-child(3n+1)), .trust-item:nth-child(n+4) { border: 0; }
+    .trust-item { padding: 16px 14px; }
+    .trust-item:nth-child(even) { border-left: 1px solid var(--h-line); }
+    .trust-item:nth-child(n+3)  { border-top: 1px solid var(--h-line); }
+    .trust-icon { width: 44px; height: 44px; }
+    .trust-title { font-size: 14.5px; }
+    .trust-sub { font-size: 13px; }
   }
   @media (max-width: 440px) {
-    .trust-list { grid-template-columns: 1fr; }
+    .trust-list { grid-template-columns: 1fr; padding: 8px 18px; }
+    .trust-item:nth-child(even), .trust-item:nth-child(n+3) { border: 0; }
+    .trust-item { padding: 16px 0; }
+    .trust-item + .trust-item { border-top: 1px solid var(--h-line); }
   }
 `;
 
@@ -157,7 +171,7 @@ export default function TrustBar() {
       <ul className="trust-list">
         {ITEMS.map((item) => (
           <li key={item.title} className="trust-item">
-            <span className="trust-icon">{item.icon}</span>
+            <span className="trust-icon" aria-hidden="true">{item.icon}</span>
             <span className="trust-text">
               <span className="trust-title">{item.title}</span>
               <span className="trust-sub">{item.sub}</span>
