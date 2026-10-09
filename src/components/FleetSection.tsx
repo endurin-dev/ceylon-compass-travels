@@ -26,164 +26,191 @@ type Vehicle = {
 type Size = "all" | "small" | "medium" | "large";
 
 const SIZES: { key: Size; label: string; test: (n: number) => boolean }[] = [
-  { key: "all",    label: "All vehicles", test: () => true },
+  { key: "all",    label: "All vehicles",   test: () => true },
   { key: "small",  label: "1–3 passengers", test: (n) => n <= 3 },
   { key: "medium", label: "4–6 passengers", test: (n) => n >= 4 && n <= 6 },
   { key: "large",  label: "7+ passengers",  test: (n) => n >= 7 },
 ];
 
 const STYLES = `
-  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@600;700;800&display=swap');
+  @import url('https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700;12..96,800&family=Figtree:wght@400;500;600;700&display=swap');
 
   .fleet-page {
-    --f-navy:   #0f2a4d;
-    --f-blue:   #4a6488;
-    --f-icon:   #2b4a7a;
-    --f-gold:   #b7791f;
-    --f-gold-d: #96620f;
-    --f-line:   rgba(15,42,77,.10);
+    --h-ink:       #10241f;
+    --h-ink-soft:  rgba(16,36,31,.80);
+    --h-ink-faint: rgba(16,36,31,.66);
+    --h-teal:      #0b6b5a;
+    --h-teal-deep: #084c40;
+    --h-sun:       #f4b63d;
+    --h-sun-deep:  #e59d12;
+    --h-mint:      #7fe3c8;
+    --h-line:      rgba(16,36,31,.12);
+    --h-ease:      cubic-bezier(.25,.1,.25,1);
 
-    position: relative;
-    min-height: 100vh;
-    background: linear-gradient(180deg, #ffffff 0%, #f7f9fc 100%);
-    padding: 72px 20px 72px;
-    font-family: 'Inter', system-ui, sans-serif;
-    color: var(--f-navy);
+    position: relative; min-height: 100vh; overflow-x: clip;
+    font-family: 'Figtree', system-ui, sans-serif; color: var(--h-ink);
+    background:
+      radial-gradient(60% 40% at 90% 85%, rgba(244,182,61,.22), transparent 70%),
+      radial-gradient(70% 45% at 5% 55%, rgba(11,107,90,.16), transparent 70%),
+      #e9f1ec;
   }
   .fleet-page *, .fleet-page *::before, .fleet-page *::after { box-sizing: border-box; }
-  .fleet-page :focus-visible { outline: 3px solid var(--f-gold); outline-offset: 2px; }
-  @media (max-width: 1199px) { .fleet-page { padding-top: 48px; } }
+  .fleet-page :focus-visible { outline: 3px solid var(--h-teal); outline-offset: 2px; border-radius: 8px; }
 
-  .fleet-shell { max-width: 1240px; margin: 0 auto; }
-
-  /* ── Header ── */
-  .fleet-header { margin-bottom: 24px; }
-  .fleet-eyebrow {
-    display: flex; align-items: center; gap: 10px;
-    font-size: 12px; font-weight: 600; letter-spacing: .16em; text-transform: uppercase;
-    color: var(--f-gold);
+  /* ══ Title band: continues the solid teal header ══ */
+  .fleet-hero {
+    position: relative; overflow: hidden; color: #fff; padding: 56px 5vw 112px;
+    background:
+      radial-gradient(60% 90% at 95% 100%, rgba(244,182,61,.2), transparent 70%),
+      radial-gradient(70% 90% at 0% 0%, rgba(11,107,90,.7), transparent 70%),
+      linear-gradient(180deg, #084c40 0%, #0a3a31 100%);
   }
-  .fleet-eyebrow::before { content: ""; width: 26px; height: 1.5px; background: var(--f-gold); }
-  .fleet-title {
-    font-family: 'Playfair Display', Georgia, serif;
-    margin: 6px 0 6px; font-size: clamp(30px, 3.6vw, 44px); font-weight: 700;
-    line-height: 1.1; letter-spacing: -.01em; color: var(--f-navy);
+  .fleet-hero-inner { max-width: 1240px; margin: 0 auto; animation: fleet-rise .7s var(--h-ease) both; }
+  @keyframes fleet-rise { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: none; } }
+  .fleet-kicker {
+    display: inline-block; font-size: 13.5px; font-weight: 600; color: #fff; border-radius: 100px; padding: 5px 14px; margin-bottom: 16px;
+    background: linear-gradient(135deg, rgba(255,255,255,.26), rgba(255,255,255,.08));
+    -webkit-backdrop-filter: blur(14px) saturate(180%); backdrop-filter: blur(14px) saturate(180%);
+    border: 1px solid rgba(255,255,255,.4); box-shadow: 0 6px 18px rgba(0,0,0,.18), inset 0 1.5px 0 rgba(255,255,255,.5);
   }
-  .fleet-subtitle { margin: 0; color: var(--f-blue); font-size: 16px; line-height: 1.5; max-width: 620px; }
+  .fleet-title { font-family: 'Bricolage Grotesque', sans-serif; font-size: clamp(34px, 5.2vw, 62px); font-weight: 800; letter-spacing: -.02em; line-height: 1.04; margin: 0 0 12px; text-shadow: 0 2px 20px rgba(0,0,0,.25); }
+  .fleet-subtitle { font-family: 'Bricolage Grotesque', sans-serif; font-size: clamp(17px, 2vw, 24px); font-weight: 600; line-height: 1.3; color: var(--h-mint); max-width: 40ch; margin: 0; }
 
-  /* ── Filters ── */
+  .fleet-shell { position: relative; z-index: 1; max-width: 1240px; margin: -64px auto 0; padding: 0 5vw 72px; }
+
+  /* ══ Filter bar: frosted card that rises over the band, like the hero booking card ══ */
   .fleet-bar {
-    display: flex; align-items: center; justify-content: space-between;
-    gap: 12px 20px; flex-wrap: wrap; margin-bottom: 22px;
-    padding-bottom: 18px; border-bottom: 1px solid var(--f-line);
+    position: relative; overflow: hidden; display: flex; align-items: center; justify-content: space-between; gap: 12px 20px; flex-wrap: wrap;
+    margin-bottom: 24px; padding: 18px 20px 14px; border-radius: 22px;
+    background: linear-gradient(135deg, rgba(255,255,255,.92), rgba(255,255,255,.78));
+    -webkit-backdrop-filter: blur(22px) saturate(170%); backdrop-filter: blur(22px) saturate(170%);
+    border: 1px solid rgba(255,255,255,.85);
+    box-shadow: 0 30px 60px rgba(10,30,45,.2), 0 6px 16px rgba(10,30,45,.1);
   }
+  .fleet-bar::before { content: ""; position: absolute; left: 0; right: 0; top: 0; height: 4px; background: linear-gradient(90deg, var(--h-teal-deep), var(--h-teal) 55%, var(--h-sun)); }
   .fleet-chips { display: flex; gap: 8px; flex-wrap: wrap; }
   .fleet-chip {
-    display: inline-flex; align-items: center; gap: 8px;
-    padding: 9px 14px; border-radius: 7px; cursor: pointer;
-    background: #fff; color: var(--f-navy); border: 1px solid var(--f-line);
-    font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 600;
-    transition: background .2s, color .2s, border-color .2s;
+    display: inline-flex; align-items: center; gap: 8px; min-height: 40px; padding: 0 16px; border-radius: 100px; cursor: pointer; white-space: nowrap;
+    background: #fff; color: var(--h-ink); border: 1px solid var(--h-line);
+    font-family: 'Figtree', sans-serif; font-size: 14px; font-weight: 600;
+    transition: background .2s, color .2s, border-color .2s, box-shadow .2s;
   }
-  .fleet-chip small { font-size: 12px; font-weight: 600; color: var(--f-blue); font-variant-numeric: tabular-nums; }
-  .fleet-chip:hover { border-color: var(--f-gold); color: var(--f-gold); }
-  .fleet-chip[aria-pressed="true"] { background: var(--f-navy); border-color: var(--f-navy); color: #fff; }
-  .fleet-chip[aria-pressed="true"] small { color: rgba(255,255,255,.72); }
-  .fleet-count { margin: 0; font-size: 13.5px; font-weight: 500; color: var(--f-blue); }
+  .fleet-chip small { font-size: 12.5px; font-weight: 700; color: var(--h-teal); font-variant-numeric: tabular-nums; }
+  .fleet-chip:hover { border-color: var(--h-teal); color: var(--h-teal-deep); }
+  .fleet-chip[aria-pressed="true"] { background: linear-gradient(180deg, #11806b, var(--h-teal-deep)); border-color: var(--h-teal-deep); color: #fff; box-shadow: 0 6px 14px rgba(8,76,64,.3), inset 0 1px 0 rgba(255,255,255,.25); }
+  .fleet-chip[aria-pressed="true"] small { color: var(--h-mint); }
+  .fleet-count { margin: 0; font-size: 14px; font-weight: 600; color: var(--h-ink-faint); }
 
-  /* ── Grid ── */
-  .fleet-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 16px; }
+  /* ══ Grid ══ */
+  .fleet-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(255px, 1fr)); gap: 20px; }
 
   .fleet-card {
-    display: flex; flex-direction: column;
-    background: #fff; border-radius: 12px; padding: 4px 4px 14px;
-    border: 1px solid var(--f-line);
-    box-shadow: 0 8px 26px rgba(15,42,77,.08);
-    transition: transform .25s ease, box-shadow .25s ease;
+    display: flex; flex-direction: column; padding: 8px 8px 16px; border-radius: 24px;
+    background: linear-gradient(135deg, rgba(255,255,255,.96), rgba(255,255,255,.86));
+    border: 1px solid rgba(255,255,255,.9);
+    box-shadow: 0 18px 40px rgba(10,30,45,.12), 0 3px 8px rgba(10,30,45,.06);
+    transition: transform .28s var(--h-ease), box-shadow .28s var(--h-ease);
   }
-  .fleet-card:hover { transform: translateY(-4px); box-shadow: 0 16px 36px rgba(15,42,77,.14); }
+  .fleet-card:hover { transform: translateY(-5px); box-shadow: 0 26px 52px rgba(10,30,45,.18), 0 4px 10px rgba(10,30,45,.08); }
 
-  .fleet-image { position: relative; aspect-ratio: 4 / 3; border-radius: 9px; overflow: hidden; background: #e8eef5; }
-  .fleet-image img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .fleet-image { position: relative; aspect-ratio: 4 / 3; border-radius: 17px; overflow: hidden; background: linear-gradient(135deg, #dfeae4, #eef4f0); }
+  .fleet-image img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform .5s var(--h-ease); }
+  .fleet-card:hover .fleet-image img { transform: scale(1.04); }
   .fleet-tag {
-    position: absolute; left: 8px; top: 8px;
-    padding: 4px 10px; border-radius: 5px;
-    background: var(--f-gold); color: #fff;
-    font-size: 11.5px; font-weight: 600; line-height: 1.3;
+    position: absolute; left: 10px; top: 10px; z-index: 1; padding: 5px 12px; border-radius: 100px;
+    background: linear-gradient(180deg, #ffc858, var(--h-sun-deep)); color: var(--h-ink);
+    font-size: 12.5px; font-weight: 700; line-height: 1.2; box-shadow: 0 6px 14px rgba(0,0,0,.2), inset 0 1px 0 rgba(255,255,255,.55);
   }
 
-  .fleet-body { display: flex; flex-direction: column; flex: 1; padding: 14px 10px 0; }
-  .fleet-name { margin: 0 0 2px; font-size: 16px; font-weight: 700; line-height: 1.25; color: var(--f-navy); }
-  .fleet-model { margin: 0 0 10px; font-size: 12.5px; font-weight: 500; color: var(--f-blue); line-height: 1.3; }
+  .fleet-body { display: flex; flex-direction: column; flex: 1; padding: 16px 12px 0; }
+  .fleet-name { margin: 0 0 2px; font-family: 'Bricolage Grotesque', sans-serif; font-size: 21px; font-weight: 800; letter-spacing: -.01em; line-height: 1.15; color: var(--h-ink); }
+  .fleet-model { margin: 0 0 14px; font-size: 14px; font-weight: 500; color: var(--h-ink-faint); line-height: 1.3; }
 
-  .fleet-specs { list-style: none; margin: 0 0 14px; padding: 0; display: grid; gap: 8px; }
-  .fleet-specs li { display: flex; align-items: center; gap: 9px; font-size: 12.5px; font-weight: 500; color: var(--f-blue); line-height: 1.3; }
-  .fleet-specs svg { flex-shrink: 0; stroke: var(--f-icon); }
+  .fleet-specs { list-style: none; margin: 0 0 16px; padding: 0; display: grid; grid-template-columns: 1fr 1fr; gap: 10px 12px; }
+  .fleet-specs li { display: flex; align-items: center; gap: 9px; font-size: 14px; font-weight: 600; color: var(--h-ink-soft); line-height: 1.25; min-width: 0; }
+  .fleet-specs li:last-child { grid-column: 1 / -1; }
+  .fleet-spec-icon { flex-shrink: 0; width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: var(--h-teal-deep); background: rgba(11,107,90,.1); border: 1px solid rgba(11,107,90,.16); }
 
-  .fleet-price { margin-top: auto; display: flex; align-items: baseline; gap: 6px; padding-bottom: 10px; }
-  .fleet-price-from { font-size: 12.5px; font-weight: 500; color: var(--f-blue); }
-  .fleet-price-amount { font-size: 21px; font-weight: 700; color: var(--f-navy); line-height: 1; font-variant-numeric: tabular-nums; }
-  .fleet-price-unit { font-size: 12.5px; font-weight: 500; color: var(--f-blue); }
-  .fleet-price-quote { font-size: 15px; font-weight: 700; color: var(--f-navy); }
+  .fleet-price { margin-top: auto; display: flex; align-items: baseline; gap: 6px; padding: 14px 0 14px; border-top: 1px solid var(--h-line); }
+  .fleet-price-from { font-size: 13.5px; font-weight: 600; color: var(--h-ink-faint); }
+  .fleet-price-amount { font-family: 'Bricolage Grotesque', sans-serif; font-size: 30px; font-weight: 800; letter-spacing: -.02em; color: var(--h-teal-deep); line-height: 1; font-variant-numeric: tabular-nums; }
+  .fleet-price-unit { font-size: 13.5px; font-weight: 600; color: var(--h-ink-faint); }
+  .fleet-price-quote { font-family: 'Bricolage Grotesque', sans-serif; font-size: 20px; font-weight: 700; color: var(--h-teal-deep); }
 
   .fleet-button {
-    display: flex; align-items: center; justify-content: center; gap: 6px; width: 100%;
-    padding: 9px 12px; border-radius: 7px; cursor: pointer;
-    background: #fff; color: var(--f-gold); border: 1px solid var(--f-gold);
-    font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 600; text-decoration: none;
-    transition: background .2s, color .2s;
+    display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%; min-height: 46px; padding: 0 16px; border-radius: 14px; cursor: pointer;
+    font-family: 'Figtree', sans-serif; font-size: 14.5px; font-weight: 700; text-decoration: none; border: none;
+    color: #fff; background: linear-gradient(180deg, #11806b, var(--h-teal-deep)); box-shadow: 0 8px 18px rgba(8,76,64,.35), inset 0 1px 0 rgba(255,255,255,.25);
+    transition: transform .2s var(--h-ease), background .2s;
   }
-  .fleet-button:hover { background: var(--f-gold); color: #fff; }
-  .fleet-button.solid { background: var(--f-gold); color: #fff; }
-  .fleet-button.solid:hover { background: var(--f-gold-d); border-color: var(--f-gold-d); }
-  .fleet-button.inline { display: inline-flex; width: auto; padding: 10px 20px; }
+  .fleet-button:hover { background: linear-gradient(180deg, #14917a, var(--h-teal)); transform: translateY(-2px); }
+  .fleet-button.sun { color: var(--h-ink); background: linear-gradient(180deg, #ffc858, var(--h-sun-deep)); box-shadow: 0 8px 18px rgba(229,157,18,.38), inset 0 1px 0 rgba(255,255,255,.55); }
+  .fleet-button.sun:hover { background: linear-gradient(180deg, #ffbf40, #d98f0a); }
+  .fleet-button.outline { color: var(--h-teal-deep); background: #fff; border: 1px solid var(--h-teal); box-shadow: none; }
+  .fleet-button.outline:hover { background: rgba(11,107,90,.08); }
+  .fleet-button.inline { display: inline-flex; width: auto; padding: 0 22px; }
 
-  /* ── States ── */
+  /* ══ States ══ */
   .fleet-skel {
-    border-radius: 12px; height: 400px; border: 1px solid var(--f-line);
-    background: linear-gradient(100deg, #eef2f7 30%, #f8fafc 50%, #eef2f7 70%);
+    border-radius: 24px; height: 440px; border: 1px solid rgba(255,255,255,.8);
+    background: linear-gradient(100deg, rgba(255,255,255,.55) 30%, rgba(255,255,255,.9) 50%, rgba(255,255,255,.55) 70%);
     background-size: 200% 100%; animation: fleet-shimmer 1.4s linear infinite;
   }
   @keyframes fleet-shimmer { 0% { background-position: -200% 0; } 100% { background-position: 200% 0; } }
 
   .fleet-state {
-    grid-column: 1 / -1; text-align: center; padding: 48px 20px;
-    background: #fff; border: 1px solid var(--f-line); border-radius: 12px;
-    box-shadow: 0 8px 26px rgba(15,42,77,.06);
+    grid-column: 1 / -1; text-align: center; padding: 52px 22px; border-radius: 24px;
+    background: linear-gradient(135deg, rgba(255,255,255,.96), rgba(255,255,255,.86)); border: 1px solid rgba(255,255,255,.9);
+    box-shadow: 0 18px 40px rgba(10,30,45,.12);
   }
-  .fleet-state h3 { font-family: 'Playfair Display', Georgia, serif; margin: 0 0 8px; font-size: 24px; font-weight: 700; color: var(--f-navy); }
-  .fleet-state p { margin: 0 auto 18px; max-width: 440px; color: var(--f-blue); font-size: 15px; line-height: 1.5; }
+  .fleet-state h3 { font-family: 'Bricolage Grotesque', sans-serif; margin: 0 0 8px; font-size: 26px; font-weight: 800; letter-spacing: -.01em; color: var(--h-ink); }
+  .fleet-state p { margin: 0 auto 20px; max-width: 46ch; color: var(--h-ink-soft); font-size: 16px; line-height: 1.6; }
   .fleet-state-actions { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
 
-  /* ── CTA ── */
+  /* ══ Call to action: same treatment as the footer card ══ */
   .fleet-cta {
-    margin-top: 48px; padding: 32px 30px; border-radius: 12px; color: #fff;
-    background: var(--f-navy);
-    display: flex; align-items: center; justify-content: space-between; gap: 20px; flex-wrap: wrap;
-    box-shadow: 0 16px 36px rgba(15,42,77,.18);
+    position: relative; overflow: hidden; margin-top: 48px; padding: 34px 34px 32px; border-radius: 24px; color: #fff;
+    background: radial-gradient(60% 90% at 100% 100%, rgba(244,182,61,.22), transparent 70%), linear-gradient(135deg, #0b6b5a, #084c40 60%, #082a24);
+    display: flex; align-items: center; justify-content: space-between; gap: 20px 32px; flex-wrap: wrap;
+    box-shadow: 0 26px 52px rgba(8,76,64,.35), inset 0 1px 0 rgba(255,255,255,.18);
   }
-  .fleet-cta h2 { font-family: 'Playfair Display', Georgia, serif; margin: 0 0 6px; font-size: clamp(22px, 2.6vw, 30px); font-weight: 700; line-height: 1.15; }
-  .fleet-cta p { margin: 0; font-size: 15px; color: rgba(255,255,255,.78); line-height: 1.5; }
+  .fleet-cta::before { content: ""; position: absolute; left: 0; right: 0; top: 0; height: 4px; background: linear-gradient(90deg, rgba(255,255,255,.2), var(--h-sun)); }
+  .fleet-cta h2 { font-family: 'Bricolage Grotesque', sans-serif; margin: 0 0 6px; font-size: clamp(22px, 2.6vw, 32px); font-weight: 800; letter-spacing: -.015em; line-height: 1.15; }
+  .fleet-cta p { margin: 0; max-width: 46ch; font-size: 16px; font-weight: 500; color: rgba(255,255,255,.82); line-height: 1.55; }
   .fleet-cta-actions { display: flex; gap: 10px; flex-wrap: wrap; }
-  .fleet-cta .fleet-button.ghost { background: transparent; color: #fff; border-color: rgba(255,255,255,.45); }
-  .fleet-cta .fleet-button.ghost:hover { background: #fff; color: var(--f-navy); border-color: #fff; }
+  .fleet-cta .fleet-button.ghost { color: #fff; background: linear-gradient(135deg, rgba(255,255,255,.22), rgba(255,255,255,.07)); border: 1px solid rgba(255,255,255,.35); box-shadow: inset 0 1px 0 rgba(255,255,255,.4); }
+  .fleet-cta .fleet-button.ghost:hover { background: rgba(255,255,255,.2); }
 
-  /* ── Responsive ── */
+  /* ══ Responsive ══ */
+  @media (max-width: 900px) {
+    .fleet-hero { padding: 40px 5vw 104px; }
+    .fleet-shell { padding: 0 3.5vw 64px; margin-top: -60px; }
+  }
+  @media (max-width: 640px) {
+    .fleet-bar { padding: 14px 14px 12px; border-radius: 20px; }
+    /* one scrollable row of filters instead of wrapping onto several lines */
+    .fleet-chips { flex-wrap: nowrap; overflow-x: auto; margin: 0 -14px; padding: 2px 14px 6px; scrollbar-width: none; -webkit-overflow-scrolling: touch; }
+    .fleet-chips::-webkit-scrollbar { display: none; }
+    .fleet-chip { min-height: 44px; flex-shrink: 0; }
+  }
   @media (max-width: 520px) {
-    .fleet-page { padding: 36px 14px 56px; }
+    .fleet-hero { padding: 32px 5vw 100px; }
     .fleet-grid { grid-template-columns: 1fr; }
-    .fleet-button, .fleet-chip { min-height: 44px; }
-    .fleet-cta { padding: 26px 18px; }
-    .fleet-cta-actions, .fleet-cta-actions .fleet-button { width: 100%; }
+    .fleet-button { min-height: 50px; }
+    .fleet-cta { padding: 28px 20px 24px; }
+    .fleet-cta-actions { width: 100%; flex-direction: column; }
+    .fleet-cta-actions .fleet-button { width: 100%; }
   }
   @media (prefers-reduced-motion: reduce) {
-    .fleet-card, .fleet-button, .fleet-chip { transition: none; }
+    .fleet-hero-inner { animation: none; }
+    .fleet-card, .fleet-button, .fleet-chip, .fleet-image img { transition: none; }
+    .fleet-card:hover .fleet-image img { transform: none; }
     .fleet-skel { animation: none; }
   }
 `;
 
 const Arrow = () => (
-  <svg width={14} height={14} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+  <svg width={15} height={15} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
     <path d="M5 12h14M13 6l6 6-6 6" />
   </svg>
 );
@@ -258,15 +285,17 @@ export default function FleetPage() {
       <style>{STYLES}</style>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
 
-      <div className="fleet-shell">
-        <header className="fleet-header">
-          <span className="fleet-eyebrow">Our Fleet</span>
-          <h1 className="fleet-title">Choose Your Perfect Ride</h1>
+      <div className="fleet-hero">
+        <div className="fleet-hero-inner">
+          <p className="fleet-kicker">Cars, vans and buses with a driver</p>
+          <h1 className="fleet-title">Choose your perfect ride</h1>
           <p className="fleet-subtitle">
-            Comfortable, clean and well-maintained vehicles for every journey. Pick by group size, then book online or message us.
+            Clean, comfortable, well-maintained vehicles for every group size. Pick one, then book online or message us.
           </p>
-        </header>
+        </div>
+      </div>
 
+      <div className="fleet-shell">
         <div className="fleet-bar">
           <div className="fleet-chips" role="group" aria-label="Filter by group size">
             {SIZES.map((s) => (
@@ -289,8 +318,8 @@ export default function FleetPage() {
               <h3>{error}</h3>
               <p>Check your connection and try again, or message us and we will recommend a vehicle for your trip.</p>
               <div className="fleet-state-actions">
-                <button type="button" className="fleet-button solid inline" onClick={() => setReloadKey((k) => k + 1)}>Try again</button>
-                <a href={waLink()} target="_blank" rel="noopener noreferrer" className="fleet-button inline">WhatsApp us</a>
+                <button type="button" className="fleet-button sun inline" onClick={() => setReloadKey((k) => k + 1)}>Try again</button>
+                <a href={waLink()} target="_blank" rel="noopener noreferrer" className="fleet-button outline inline">WhatsApp us</a>
               </div>
             </div>
           )}
@@ -305,9 +334,9 @@ export default function FleetPage() {
               </p>
               <div className="fleet-state-actions">
                 {vehicles.length > 0 && (
-                  <button type="button" className="fleet-button solid inline" onClick={() => setSize("all")}>Show all vehicles</button>
+                  <button type="button" className="fleet-button sun inline" onClick={() => setSize("all")}>Show all vehicles</button>
                 )}
-                <a href={waLink()} target="_blank" rel="noopener noreferrer" className="fleet-button inline">WhatsApp us</a>
+                <a href={waLink()} target="_blank" rel="noopener noreferrer" className="fleet-button outline inline">WhatsApp us</a>
               </div>
             </div>
           )}
@@ -334,24 +363,30 @@ export default function FleetPage() {
 
                 <ul className="fleet-specs">
                   <li>
-                    <svg width={16} height={16} viewBox="0 0 24 24" fill="none" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                      <circle cx="12" cy="8" r="3.5" />
-                      <path d="M5 20c0-3.9 3.1-7 7-7s7 3.1 7 7" />
-                    </svg>
-                    {vehicle.maxPassengers} Passengers
+                    <span className="fleet-spec-icon" aria-hidden="true">
+                      <svg width={16} height={16} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round">
+                        <circle cx="12" cy="8" r="3.5" />
+                        <path d="M5 20c0-3.9 3.1-7 7-7s7 3.1 7 7" />
+                      </svg>
+                    </span>
+                    {vehicle.maxPassengers} passengers
                   </li>
                   <li>
-                    <svg width={16} height={16} viewBox="0 0 24 24" fill="none" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                      <rect x="5" y="7" width="14" height="13" rx="2" />
-                      <path d="M9 7V4h6v3M9 11v5M15 11v5" />
-                    </svg>
-                    {vehicle.maxLuggage} Luggage
+                    <span className="fleet-spec-icon" aria-hidden="true">
+                      <svg width={16} height={16} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round">
+                        <rect x="5" y="7" width="14" height="13" rx="2" />
+                        <path d="M9 7V4h6v3M9 11v5M15 11v5" />
+                      </svg>
+                    </span>
+                    {vehicle.maxLuggage} luggage
                   </li>
                   <li>
-                    <svg width={16} height={16} viewBox="0 0 24 24" fill="none" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                      <rect x="4" y="4" width="10" height="16" rx="1.5" />
-                      <path d="M4 10h10M14 8h2.5a1.5 1.5 0 011.5 1.5V16a1.5 1.5 0 003 0V9l-2.5-2.5" />
-                    </svg>
+                    <span className="fleet-spec-icon" aria-hidden="true">
+                      <svg width={16} height={16} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round">
+                        <rect x="4" y="4" width="10" height="16" rx="1.5" />
+                        <path d="M4 10h10M14 8h2.5a1.5 1.5 0 011.5 1.5V16a1.5 1.5 0 003 0V9l-2.5-2.5" />
+                      </svg>
+                    </span>
                     {vehicle.special || "Air-conditioned"}
                   </li>
                 </ul>
@@ -369,7 +404,7 @@ export default function FleetPage() {
                 </div>
 
                 <Link href={`/reservation?vehicleId=${encodeURIComponent(vehicle.id)}`} className="fleet-button">
-                  Book Now <Arrow />
+                  Book now <Arrow />
                 </Link>
               </div>
             </article>
@@ -382,7 +417,7 @@ export default function FleetPage() {
             <p>Tell us your group size, luggage and route and we will recommend one with a fixed fare.</p>
           </div>
           <div className="fleet-cta-actions">
-            <Link href="/reservation" className="fleet-button solid inline">Book Now <Arrow /></Link>
+            <Link href="/reservation" className="fleet-button sun inline">Book now <Arrow /></Link>
             <a href={waLink()} target="_blank" rel="noopener noreferrer" className="fleet-button ghost inline">WhatsApp us</a>
           </div>
         </section>

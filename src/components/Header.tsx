@@ -6,16 +6,29 @@ import Image from "next/image";
 import { usePathname } from "next/navigation";
 
 /* ─────────────────────────────────────────────
-   Edit these once — chat links used in header
-   and mobile drawer.
+   Edit these once — used in the header and the
+   mobile menu.
    ───────────────────────────────────────────── */
-const WHATSAPP_URL = "https://wa.me/94771234567";            // TODO: digits only, with country code
+const BRAND        = "Ceylon Compass Travels";
+const SLOGAN       = "Travel Sri Lanka";
+const PHONE        = { display: "+94 76 006 8828", tel: "+94760068828" };
+const WHATSAPP_URL = "https://wa.me/94760068828";            // digits only; confirm this is your WhatsApp number
 const TELEGRAM_URL = "https://t.me/your_username";           // TODO: your Telegram username
-const SIGNAL_URL   = "https://signal.me/#p/+94771234567";    // TODO: your Signal number with +
+const SIGNAL_URL   = "https://signal.me/#p/+94760068828";    // TODO: your Signal number with +
+
+const navLinks = [
+  { href: "/",            label: "Home" },
+  { href: "/fleet",       label: "Fleet" },
+  { href: "/rates",       label: "Rates" },
+  { href: "/reservation", label: "Reservation" },
+  { href: "/faq",         label: "FAQ" },
+  { href: "/contact-us",  label: "Contact" },
+];
 
 const chatLinks = [
   {
     key: "whatsapp",
+    short: "WhatsApp",
     label: "Chat on WhatsApp",
     href: WHATSAPP_URL,
     icon: (
@@ -25,27 +38,28 @@ const chatLinks = [
     ),
   },
   {
+    key: "telegram",
+    short: "Telegram",
+    label: "Chat on Telegram",
+    href: TELEGRAM_URL,
+    icon: (
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+        <path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z" />
+      </svg>
+    ),
+  },
+  {
     key: "signal",
+    short: "Signal",
     label: "Message on Signal",
     href: SIGNAL_URL,
     icon: (
-      /* Simplified Signal mark: dotted ring + speech bubble with tail */
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
         <circle cx="12" cy="12" r="10.6" stroke="currentColor" strokeWidth="1.4" strokeDasharray="1.6 2.4" strokeLinecap="round" />
         <path
           fill="currentColor"
           d="M12 4.6c-4.09 0-7.4 3.03-7.4 6.77 0 1.55.57 2.98 1.53 4.12l-.9 3.16 3.3-1.02c.81.3 1.7.46 2.62.46h.1c4.09 0 7.4-3.03 7.4-6.77S16.09 4.6 12 4.6z"
         />
-      </svg>
-    ),
-  },
-  {
-    key: "telegram",
-    label: "Chat on Telegram",
-    href: TELEGRAM_URL,
-    icon: (
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-        <path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z" />
       </svg>
     ),
   },
@@ -57,252 +71,217 @@ export default function Header() {
   const pathname = usePathname();
   const isHome = pathname === "/";
 
+  const isActive = (href: string) =>
+    href === "/" ? pathname === "/" : pathname === href || pathname.startsWith(`${href}/`);
+
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 32);
     onScroll();
-    window.addEventListener("scroll", onScroll);
+    window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
   useEffect(() => { setIsOpen(false); }, [pathname]);
 
-  const navLinks = [
-    { href: "/",            label: "Home" },
-    { href: "/fleet",       label: "Fleet" },
-    { href: "/rates",       label: "Rates" },
-    { href: "/reservation", label: "Reservation" },
-    { href: "/faq",         label: "FAQ" },
-    { href: "/contact-us",  label: "Contact" },
-  ];
+  /* Lock page scroll and allow Esc to close while the menu is open */
+  useEffect(() => {
+    if (!isOpen) return;
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    const onKey = (e: KeyboardEvent) => { if (e.key === "Escape") setIsOpen(false); };
+    window.addEventListener("keydown", onKey);
+    return () => {
+      document.body.style.overflow = prev;
+      window.removeEventListener("keydown", onKey);
+    };
+  }, [isOpen]);
 
-  const NAVY_DEEP    = "#080f1e";
-  const NAVY_MID     = "#0d1a33";
-  const NAVY_SURFACE = "rgba(13,26,51,0.6)";
-  const GOLD         = "#f4b63d";
-  const GOLD_DIM     = "rgba(244,182,61,0.65)";
-  const GOLD_GLOW    = "rgba(244,182,61,0.18)";
-  const WHITE        = "#f0f4ff";
-  const WHITE_DIM    = "rgba(240,244,255,0.65)";
-  const BORDER_MID   = "rgba(244,182,61,0.28)";
-
-  // Same fonts as the Fleet section
-  const FONT_DISPLAY = "'Playfair Display', Georgia, serif";
-  const FONT_BODY    = "'Inter', system-ui, sans-serif";
-
-  // Home page: transparent gradient header floating over the hero image.
-  // Other pages: solid navy. After scrolling: frosted navy everywhere.
-  const headerBackground = scrolled
-    ? "rgba(8,15,30,0.88)"
-    : isHome
-      ? "linear-gradient(180deg, rgba(8,15,30,.9) 0%, rgba(8,15,30,.6) 55%, rgba(8,15,30,0) 100%)"
-      : NAVY_DEEP;
+  const headerClass = `hd${scrolled ? " is-scrolled" : isHome ? " is-home" : ""}`;
 
   return (
     <>
       <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@600;700;800&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700;12..96,800&family=Figtree:wght@400;500;600;700&display=swap');
 
-        .h-logo-circle {
-          border-radius: 50%;
-          overflow: hidden;
-          flex-shrink: 0;
-          border: 1.5px solid ${BORDER_MID};
-          box-shadow: 0 0 0 3px rgba(244,182,61,0.08), 0 4px 20px rgba(8,15,30,0.7);
-          transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
-          background: #080f1e;
-          position: relative;
+        .hd, .hd-drawer {
+          --h-ink:       #10241f;
+          --h-teal:      #0b6b5a;
+          --h-teal-deep: #084c40;
+          --h-sun:       #f4b63d;
+          --h-sun-deep:  #e59d12;
+          --h-mint:      #7fe3c8;
+          --h-ease:      cubic-bezier(.25,.1,.25,1);
+          font-family:'Figtree',system-ui,sans-serif;
         }
-        .h-logo-circle:hover {
-          border-color: rgba(244,182,61,0.55);
-          box-shadow: 0 0 0 4px rgba(244,182,61,0.12), 0 6px 28px rgba(8,15,30,0.9);
-          transform: scale(1.03);
-        }
-        .h-logo-circle::after {
-          content: '';
-          position: absolute; inset: 0; border-radius: 50%;
-          background: linear-gradient(130deg, transparent 30%, rgba(244,182,61,0.18) 50%, transparent 70%);
-          background-size: 250% 100%;
-          background-position: 200% 0;
-          transition: background-position 0.6s ease;
-          pointer-events: none; z-index: 2;
-        }
-        .h-logo-circle:hover::after { background-position: -50% 0; }
+        .hd *, .hd *::before, .hd *::after,
+        .hd-drawer *, .hd-drawer *::before, .hd-drawer *::after { box-sizing:border-box; }
+        .hd :focus-visible, .hd-drawer :focus-visible { outline:3px solid var(--h-sun); outline-offset:2px; border-radius:8px; }
 
-        .h-brand-name {
-          font-family: ${FONT_DISPLAY};
-          font-weight: 800;
-          letter-spacing: -0.01em;
-          line-height: 1.1;
-          color: #ffffff;
-          text-shadow: 0 1px 12px rgba(244,182,61,0.25);
-          transition: color 0.3s ease, text-shadow 0.3s ease;
-          white-space: nowrap;
-        }
-        .h-logo-group:hover .h-brand-name {
-          color: #ffffff;
-          text-shadow: 0 1px 18px rgba(244,182,61,0.45);
-        }
-        .h-brand-slogan {
-          font-family: ${FONT_BODY};
-          font-size: 12.5px;
-          font-weight: 500;
-          letter-spacing: 0.04em;
-          color: ${GOLD};
-          margin-top: 2px;
-          white-space: nowrap;
-          transition: color 0.3s ease;
-          opacity: 0.9;
-        }
-        .h-logo-group:hover .h-brand-slogan { opacity: 1; }
+        /* ══ Bar: solid on inner pages, clear gradient over the home hero, frosted once scrolled ══ */
+        .hd { position:fixed; top:0; left:0; right:0; z-index:9999; color:#fff; background:var(--h-teal-deep); transition:background .4s var(--h-ease), box-shadow .4s var(--h-ease); }
+        .hd.is-home { background:linear-gradient(180deg, rgba(6,32,27,.86) 0%, rgba(6,32,27,.5) 55%, rgba(6,32,27,0) 100%); }
+        .hd.is-scrolled { background:rgba(8,76,64,.9); -webkit-backdrop-filter:blur(20px) saturate(160%); backdrop-filter:blur(20px) saturate(160%); box-shadow:0 10px 34px rgba(4,24,20,.4); }
+        .hd.is-scrolled::after { content:""; position:absolute; left:0; right:0; bottom:0; height:2px; background:linear-gradient(90deg, var(--h-teal-deep), var(--h-teal) 55%, var(--h-sun)); }
 
-        .h-navlink-u {
-          position: relative;
-          font-family: ${FONT_BODY};
-          font-size: 15px; font-weight: 600;
-          color: ${WHITE_DIM};
-          text-decoration: none; padding: 8px 14px;
-          letter-spacing: 0.01em;
-          border-radius: 8px; white-space: nowrap;
-          transition: all 0.28s ease;
-        }
-        .h-navlink-u::after {
-          content: ''; position: absolute; width: 0; height: 1.5px;
-          bottom: 3px; left: 50%;
-          background: ${GOLD}; transition: width 0.35s ease;
-          transform: translateX(-50%);
-        }
-        .h-navlink-u:hover { background: ${GOLD_GLOW}; color: ${WHITE}; }
-        .h-navlink-u:hover::after { width: 55%; }
+        /* 88px unscrolled = --header-h in the hero and the <main> padding-top in layout.tsx */
+        .hd-inner { max-width:1520px; margin:0 auto; padding:0 4vw; height:88px; display:flex; align-items:center; justify-content:space-between; gap:16px; transition:height .4s var(--h-ease); }
+        .hd.is-scrolled .hd-inner { height:72px; }
 
-        .h-book-btn {
-          position: relative;
-          background: #f4b63d !important;
-          border: 2px solid #f4b63d !important;
-          box-shadow: none !important;
-          color: #10241f !important;
-          border-radius: 100px !important;
-          transition: background .25s ease, border-color .25s ease, transform .25s ease !important;
+        /* ── Brand ── */
+        .hd-brand { display:flex; align-items:center; gap:12px; text-decoration:none; color:#fff; min-width:0; }
+        .hd-logo { position:relative; width:56px; height:56px; border-radius:50%; overflow:hidden; flex-shrink:0; background:#fff;
+          border:1px solid rgba(255,255,255,.7); box-shadow:0 8px 20px rgba(0,0,0,.28), inset 0 1.5px 0 rgba(255,255,255,.9); transition:width .4s var(--h-ease), height .4s var(--h-ease), transform .25s var(--h-ease); }
+        .hd.is-scrolled .hd-logo { width:46px; height:46px; }
+        .hd-brand:hover .hd-logo { transform:scale(1.04); }
+        .hd-brand-text { display:flex; flex-direction:column; min-width:0; }
+        .hd-brand-name { font-family:'Bricolage Grotesque',sans-serif; font-size:22px; font-weight:800; letter-spacing:-.015em; line-height:1.08; text-shadow:0 1px 12px rgba(0,0,0,.3); transition:font-size .4s var(--h-ease); }
+        .hd.is-scrolled .hd-brand-name { font-size:19px; }
+        .hd-brand-slogan { font-size:13px; font-weight:600; color:var(--h-mint); margin-top:2px; text-shadow:0 1px 10px rgba(0,0,0,.3); }
+
+        /* ── Desktop nav ── */
+        .hd-nav { display:flex; align-items:center; gap:4px; }
+        .hd-link { position:relative; padding:9px 14px; font-size:15px; font-weight:600; color:rgba(255,255,255,.86); text-decoration:none; border-radius:100px; white-space:nowrap; transition:background .22s, color .22s; }
+        .hd-link:hover { background:rgba(255,255,255,.14); color:#fff; }
+        .hd-link.is-active { color:#fff; background:rgba(255,255,255,.12); box-shadow:inset 0 0 0 1px rgba(255,255,255,.2); }
+        .hd-link.is-active::after { content:""; position:absolute; left:50%; bottom:3px; width:16px; height:3px; margin-left:-8px; border-radius:3px; background:var(--h-sun); }
+
+        .hd-right { display:flex; align-items:center; gap:10px; flex-shrink:0; }
+        .hd-chat { display:flex; align-items:center; gap:8px; }
+
+        /* glass circle buttons */
+        .hd-circle { width:38px; height:38px; border-radius:50%; display:inline-flex; align-items:center; justify-content:center; color:#fff; text-decoration:none; position:relative; overflow:hidden;
+          background:linear-gradient(145deg, rgba(255,255,255,.26), rgba(255,255,255,.08));
+          border:1px solid rgba(255,255,255,.35); box-shadow:0 6px 16px rgba(0,0,0,.2), inset 0 1.5px 0 rgba(255,255,255,.55);
+          transition:transform .22s var(--h-ease), background .22s, border-color .22s; }
+        .hd-circle:hover { transform:translateY(-2px); }
+        .hd-circle[data-k="whatsapp"]:hover { background:#25D366; border-color:#25D366; }
+        .hd-circle[data-k="telegram"]:hover { background:#27a7e7; border-color:#27a7e7; }
+        .hd-circle[data-k="signal"]:hover   { background:#3a76f0; border-color:#3a76f0; }
+
+        /* primary button: same sun gradient as the hero fare button */
+        .hd-book { display:inline-flex; align-items:center; justify-content:center; height:46px; padding:0 24px; border-radius:100px; font-size:15px; font-weight:700; color:var(--h-ink); text-decoration:none; white-space:nowrap;
+          background:linear-gradient(180deg, #ffc858, var(--h-sun-deep)); box-shadow:0 8px 18px rgba(229,157,18,.38), inset 0 1px 0 rgba(255,255,255,.55);
+          transition:height .4s var(--h-ease), transform .22s var(--h-ease), background .22s; }
+        .hd.is-scrolled .hd-book { height:42px; }
+        .hd-book:hover { background:linear-gradient(180deg, #ffbf40, #d98f0a); transform:translateY(-2px); }
+        .hd-book:active { transform:none; }
+
+        /* ── Burger + compact Book (mobile only) ── */
+        .hd-mobile { display:none; align-items:center; gap:8px; flex-shrink:0; }
+        .hd-book-sm { height:40px; padding:0 16px; font-size:14px; }
+        .hd.is-scrolled .hd-book-sm { height:40px; }
+        .hd-burger { width:44px; height:44px; border-radius:50%; display:flex; flex-direction:column; gap:5px; align-items:center; justify-content:center; cursor:pointer; color:#fff; padding:0;
+          background:linear-gradient(145deg, rgba(255,255,255,.26), rgba(255,255,255,.08)); border:1px solid rgba(255,255,255,.35); box-shadow:0 6px 16px rgba(0,0,0,.2), inset 0 1.5px 0 rgba(255,255,255,.55); }
+        .hd-burger-line { display:block; width:18px; height:2px; border-radius:2px; background:#fff; }
+        .hd-burger-line:nth-child(2) { width:12px; align-self:center; }
+
+        /* Desktop nav needs room: hide Telegram and Signal on mid widths (they stay in the menu) */
+        @media (max-width:1279px) { .hd-chat .hd-circle:not([data-k="whatsapp"]) { display:none; } }
+        @media (max-width:1079px) {
+          .hd-nav, .hd-right { display:none; }
+          .hd-mobile { display:flex; }
         }
-        .h-book-btn:hover {
-          background: #ffc94d !important;
-          border-color: #ffc94d !important;
-          transform: translateY(-2px) !important;
+        @media (max-width:640px) {
+          .hd-inner { padding:0 14px; gap:10px; }
+          .hd.is-scrolled .hd-inner { height:64px; }
+          .hd-logo { width:48px; height:48px; }
+          .hd.is-scrolled .hd-logo { width:42px; height:42px; }
+          .hd-brand { gap:10px; }
+          .hd-brand-name { font-size:17px; line-height:1.05; }
+          .hd.is-scrolled .hd-brand-name { font-size:16px; }
+          .hd-brand-slogan { display:none; }
         }
-        .h-book-btn:active { transform: translateY(0) !important; }
-
-        /* ── Chat icons ── */
-        .h-chat { display: flex; align-items: center; gap: 8px; }
-        .h-chat-btn {
-          width: 36px; height: 36px; border-radius: 50%;
-          display: inline-flex; align-items: center; justify-content: center;
-          color: ${WHITE_DIM};
-          background: ${NAVY_SURFACE};
-          border: 1px solid ${BORDER_MID};
-          text-decoration: none;
-          transition: color .25s ease, background .25s ease, border-color .25s ease, transform .25s ease;
+        @media (max-width:360px) {
+          .hd-brand-name { font-size:15px; }
+          .hd-book-sm { padding:0 13px; }
         }
-        .h-chat-btn:hover { transform: translateY(-2px); color: #fff; }
-        .h-chat-btn[data-k="whatsapp"]:hover { background: #25D366; border-color: #25D366; }
-        .h-chat-btn[data-k="signal"]:hover   { background: #3a76f0; border-color: #3a76f0; }
-        .h-chat-btn[data-k="telegram"]:hover { background: #27a7e7; border-color: #27a7e7; }
-        .h-chat-btn:focus-visible, .h-navlink-u:focus-visible, .h-drawer-link:focus-visible, .h-book-btn:focus-visible {
-          outline: 2px solid ${GOLD}; outline-offset: 2px;
-        }
-        .h-chat-divider { width: 1px; height: 22px; background: ${BORDER_MID}; margin: 0 4px 0 6px; }
 
-        @media (max-width: 1079px) { .h-desktop { display: none !important; } }
-        @media (min-width: 1080px) { .h-mobile-btn { display: none !important; } }
+        /* ══ Mobile menu: sheet from the right, big tap targets, thumb-zone actions ══ */
+        .hd-drawer { position:fixed; inset:0; z-index:10000; display:flex; justify-content:flex-end; }
+        .hd-backdrop { position:absolute; inset:0; background:rgba(4,20,17,.7); -webkit-backdrop-filter:blur(6px); backdrop-filter:blur(6px); animation:hdFade .25s ease both; }
+        .hd-panel { position:relative; z-index:1; width:min(380px, 100%); height:100vh; height:100dvh; display:flex; flex-direction:column; overflow-y:auto; overscroll-behavior:contain; color:#fff;
+          background:
+            radial-gradient(70% 40% at 100% 100%, rgba(244,182,61,.16), transparent 70%),
+            radial-gradient(80% 50% at 0% 0%, rgba(11,107,90,.6), transparent 70%),
+            linear-gradient(180deg, #084c40 0%, #082a24 100%);
+          box-shadow:-20px 0 60px rgba(0,0,0,.4); animation:hdSlide .32s cubic-bezier(.22,1,.36,1) both; }
+        @keyframes hdFade { from { opacity:0 } to { opacity:1 } }
+        @keyframes hdSlide { from { transform:translateX(100%) } to { transform:none } }
 
-        .h-burger-line { height: 1.8px; background: ${WHITE_DIM}; border-radius: 1px; transition: all 0.4s cubic-bezier(0.23,1,0.32,1); display: block; }
-        .h-burger-line:nth-child(1) { width: 22px; }
-        .h-burger-line:nth-child(2) { width: 15px; }
-        .h-burger-line:nth-child(3) { width: 22px; }
-        .h-burger-open .h-burger-line:nth-child(1) { transform: translateY(7px) rotate(45deg); width: 22px; }
-        .h-burger-open .h-burger-line:nth-child(2) { opacity: 0; width: 0; transform: scaleX(0); }
-        .h-burger-open .h-burger-line:nth-child(3) { transform: translateY(-7px) rotate(-45deg); width: 22px; }
+        .hd-d-top { display:flex; align-items:center; justify-content:space-between; gap:12px; padding:16px 16px 14px 18px; border-bottom:1px solid rgba(255,255,255,.14); }
+        .hd-d-brand { display:flex; align-items:center; gap:12px; min-width:0; }
+        .hd-d-brand .hd-logo { width:46px; height:46px; }
+        .hd-d-name { font-family:'Bricolage Grotesque',sans-serif; font-size:18px; font-weight:800; letter-spacing:-.01em; line-height:1.1; }
+        .hd-d-slogan { font-size:13px; font-weight:600; color:var(--h-mint); margin-top:2px; }
+        .hd-close { flex-shrink:0; width:44px; height:44px; border-radius:50%; display:flex; align-items:center; justify-content:center; color:#fff; cursor:pointer; padding:0;
+          background:linear-gradient(145deg, rgba(255,255,255,.26), rgba(255,255,255,.08)); border:1px solid rgba(255,255,255,.35); box-shadow:inset 0 1.5px 0 rgba(255,255,255,.55); }
 
-        .h-drawer { position: fixed; inset: 0; z-index: 9998; display: flex; }
-        .h-drawer-backdrop { position: absolute; inset: 0; background: rgba(4,8,18,0.82); backdrop-filter: blur(6px); animation: fadeIn 0.3s ease both; }
-        .h-drawer-panel { position: relative; z-index: 1; width: min(340px, 88vw); height: 100%; background: ${NAVY_MID}; border-right: 1px solid rgba(244,182,61,0.12); display: flex; flex-direction: column; animation: slideIn 0.35s cubic-bezier(0.22,1,0.36,1) both; overflow-y: auto; }
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-        @keyframes slideIn { from { transform: translateX(-100%); } to { transform: translateX(0); } }
-        .h-drawer-top { padding: 28px 24px 22px; border-bottom: 1px solid rgba(244,182,61,0.1); display: flex; align-items: center; justify-content: space-between; gap: 16px; }
-        .h-drawer-nav { padding: 12px 0; flex: 1; }
-        .h-drawer-link { display: flex; align-items: center; gap: 12px; padding: 14px 24px; font-family: ${FONT_BODY}; font-size: 16px; font-weight: 600; letter-spacing: 0.01em; color: rgba(240,244,255,0.75); text-decoration: none; border-left: 3px solid transparent; transition: all 0.22s; }
-        .h-drawer-link:hover { color: ${WHITE}; background: rgba(244,182,61,0.05); border-left-color: rgba(244,182,61,0.45); }
-        .h-drawer-bottom { padding: 20px 24px; border-top: 1px solid rgba(244,182,61,0.1); display: flex; flex-direction: column; gap: 16px; }
-        .h-drawer-chat-label { font-family: ${FONT_BODY}; font-size: 13px; font-weight: 500; color: ${WHITE_DIM}; }
-        .h-drawer-chat { display: flex; gap: 10px; }
-        .h-drawer-chat .h-chat-btn { width: 44px; height: 44px; }
-        .h-drawer-chat .h-chat-btn svg { width: 20px; height: 20px; }
+        .hd-d-nav { flex:1; padding:10px 14px; display:flex; flex-direction:column; gap:4px; }
+        .hd-d-link { display:flex; align-items:center; justify-content:space-between; min-height:54px; padding:0 16px; border-radius:16px; font-family:'Bricolage Grotesque',sans-serif; font-size:20px; font-weight:700; color:rgba(255,255,255,.88); text-decoration:none; border:1px solid transparent; transition:background .2s, border-color .2s; }
+        .hd-d-link:hover, .hd-d-link:active { background:rgba(255,255,255,.1); }
+        .hd-d-link.is-active { color:#fff; background:linear-gradient(135deg, rgba(255,255,255,.18), rgba(255,255,255,.06)); border-color:rgba(255,255,255,.24); box-shadow:inset 0 1px 0 rgba(255,255,255,.3); }
+        .hd-d-link.is-active::before { content:""; width:4px; height:22px; border-radius:4px; background:var(--h-sun); margin-right:12px; flex-shrink:0; }
+        .hd-d-link-label { flex:1; }
+        .hd-d-chev { opacity:.5; flex-shrink:0; }
 
-        @media (prefers-reduced-motion: reduce) {
-          .h-chat-btn, .h-book-btn, .h-navlink-u, .h-logo-circle, .h-drawer-panel, .h-drawer-backdrop { transition: none !important; animation: none !important; }
+        .hd-d-bottom { padding:16px 18px calc(18px + env(safe-area-inset-bottom, 0px)); border-top:1px solid rgba(255,255,255,.14); display:flex; flex-direction:column; gap:14px; background:rgba(0,0,0,.12); }
+        .hd-d-label { font-size:13.5px; font-weight:600; color:rgba(255,255,255,.75); margin-bottom:8px; }
+        .hd-d-call { display:flex; align-items:center; justify-content:center; gap:10px; min-height:50px; border-radius:16px; font-size:16px; font-weight:700; color:#fff; text-decoration:none;
+          background:linear-gradient(135deg, rgba(255,255,255,.2), rgba(255,255,255,.07)); border:1px solid rgba(255,255,255,.3); box-shadow:inset 0 1px 0 rgba(255,255,255,.4); }
+        .hd-d-chats { display:grid; grid-template-columns:repeat(3, 1fr); gap:8px; }
+        .hd-d-chat { display:flex; flex-direction:column; align-items:center; justify-content:center; gap:6px; min-height:64px; border-radius:16px; font-size:12.5px; font-weight:600; color:#fff; text-decoration:none;
+          background:rgba(255,255,255,.08); border:1px solid rgba(255,255,255,.2); transition:background .2s, border-color .2s; }
+        .hd-d-chat svg { width:22px; height:22px; }
+        .hd-d-chat[data-k="whatsapp"]:active, .hd-d-chat[data-k="whatsapp"]:hover { background:#25D366; border-color:#25D366; }
+        .hd-d-chat[data-k="telegram"]:active, .hd-d-chat[data-k="telegram"]:hover { background:#27a7e7; border-color:#27a7e7; }
+        .hd-d-chat[data-k="signal"]:active,   .hd-d-chat[data-k="signal"]:hover   { background:#3a76f0; border-color:#3a76f0; }
+        .hd-d-book { height:54px; font-size:16.5px; width:100%; }
+
+        @media (max-width:420px) { .hd-panel { width:100%; } }
+        @media (prefers-reduced-motion:reduce) {
+          .hd, .hd-inner, .hd-logo, .hd-brand-name, .hd-book, .hd-link, .hd-circle, .hd-d-link, .hd-d-chat { transition:none; }
+          .hd-panel, .hd-backdrop { animation:none; }
         }
       `}</style>
 
-      <header style={{
-        position: "fixed", top: 0, left: 0, right: 0, zIndex: 9999,
-        background: headerBackground,
-        backdropFilter: scrolled ? "blur(22px)" : "none",
-        WebkitBackdropFilter: scrolled ? "blur(22px)" : "none",
-        boxShadow: scrolled ? "0 8px 40px rgba(4,8,18,0.75)" : "none",
-        transition: "all 0.4s cubic-bezier(0.23, 1, 0.32, 1)",
-      }}>
-        <div style={{
-          maxWidth: 1520, margin: "0 auto", padding: "0 4vw",
-          height: scrolled ? 72 : 88,   /* unscrolled 88 = --header-h in the Hero file */
-          display: "flex", alignItems: "center", justifyContent: "space-between",
-          boxSizing: "border-box", transition: "height 0.4s ease",
-        }}>
+      <header className={headerClass}>
+        <div className="hd-inner">
 
-          {/* ── Logo ── */}
-          <Link href="/" style={{ display: "flex", alignItems: "center", textDecoration: "none", gap: 14 }} className="h-logo-group">
-            <div
-              className="h-logo-circle"
-              style={{
-                width: scrolled ? 48 : 58,
-                height: scrolled ? 48 : 58,
-                transition: "all 0.4s ease",
-              }}
-            >
+          {/* ── Brand ── */}
+          <Link href="/" className="hd-brand" aria-label={`${BRAND} home`}>
+            <span className="hd-logo">
               <Image
                 src="/images/logo.jpeg"
-                alt="Ceylon Compass Travels"
+                alt=""
                 fill
-                sizes="58px"
+                sizes="56px"
                 style={{ objectFit: "cover", objectPosition: "center" }}
                 priority
               />
-            </div>
-            <div style={{ display: "flex", flexDirection: "column", gap: 0 }}>
-              <span className="h-brand-name" style={{ fontSize: scrolled ? 20 : 23 }}>
-                Ceylon Compass Travels
-              </span>
-              <span className="h-brand-slogan">Travel Sri Lanka</span>
-            </div>
+            </span>
+            <span className="hd-brand-text">
+              <span className="hd-brand-name">{BRAND}</span>
+              <span className="hd-brand-slogan">{SLOGAN}</span>
+            </span>
           </Link>
 
-          {/* ── Desktop Nav ── */}
-          <nav className="h-desktop" aria-label="Main" style={{ display: "flex", alignItems: "center", gap: 2 }}>
+          {/* ── Desktop nav ── */}
+          <nav className="hd-nav" aria-label="Main">
             {navLinks.map((link) => (
-              <Link key={link.href} href={link.href} className="h-navlink-u">
+              <Link
+                key={link.href}
+                href={link.href}
+                className={`hd-link${isActive(link.href) ? " is-active" : ""}`}
+                aria-current={isActive(link.href) ? "page" : undefined}
+              >
                 {link.label}
               </Link>
             ))}
           </nav>
 
-          {/* ── Desktop Right Controls ── */}
-          <div
-            className="h-desktop"
-            style={{
-              display: "flex",
-              alignItems: "center",
-              gap: 10,
-              flexShrink: 0,
-            }}
-          >
-            <div className="h-chat">
+          {/* ── Desktop right ── */}
+          <div className="hd-right">
+            <div className="hd-chat">
               {chatLinks.map((c) => (
                 <a
                   key={c.key}
@@ -310,123 +289,93 @@ export default function Header() {
                   href={c.href}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="h-chat-btn"
+                  className="hd-circle"
                   aria-label={c.label}
                   title={c.label}
                 >
                   {c.icon}
                 </a>
               ))}
-              <span className="h-chat-divider" aria-hidden="true" />
             </div>
-
-            <Link
-              href="/reservation"
-              className="h-book-btn"
-              style={{
-                display: "inline-flex", alignItems: "center",
-                height: scrolled ? 40 : 46,
-                padding: "0 24px",
-                color: "#10241f",
-                fontFamily: FONT_BODY, fontSize: 15, fontWeight: 700,
-                letterSpacing: "0.01em",
-                borderRadius: 100, textDecoration: "none", whiteSpace: "nowrap",
-                transition: "height 0.4s ease",
-              }}
-            >
-              Book Now
-            </Link>
+            <Link href="/reservation" className="hd-book">Book now</Link>
           </div>
 
-          {/* ── Mobile Burger ── */}
-          <button
-            className={`h-mobile-btn${isOpen ? " h-burger-open" : ""}`}
-            onClick={() => setIsOpen(!isOpen)}
-            aria-label="Toggle menu"
-            aria-expanded={isOpen}
-            style={{
-              display: "flex", flexDirection: "column", gap: 5,
-              width: 42, height: 42, alignItems: "center", justifyContent: "center",
-              background: NAVY_SURFACE,
-              border: "none",
-              borderRadius: 8, cursor: "pointer",
-            }}
-          >
-            <span className="h-burger-line" />
-            <span className="h-burger-line" />
-            <span className="h-burger-line" />
-          </button>
+          {/* ── Mobile: Book stays one tap away, menu beside it ── */}
+          <div className="hd-mobile">
+            <Link href="/reservation" className="hd-book hd-book-sm">Book now</Link>
+            <button
+              type="button"
+              className="hd-burger"
+              onClick={() => setIsOpen(true)}
+              aria-label="Open menu"
+              aria-expanded={isOpen}
+              aria-controls="mobile-menu"
+            >
+              <span className="hd-burger-line" />
+              <span className="hd-burger-line" />
+              <span className="hd-burger-line" />
+            </button>
+          </div>
         </div>
       </header>
 
-      {/* ── Mobile Drawer ── */}
+      {/* ── Mobile menu ── */}
       {isOpen && (
-        <div className="h-drawer">
-          <div className="h-drawer-backdrop" onClick={() => setIsOpen(false)} />
-          <div className="h-drawer-panel">
+        <div className="hd-drawer" id="mobile-menu" role="dialog" aria-modal="true" aria-label="Menu">
+          <div className="hd-backdrop" onClick={() => setIsOpen(false)} />
+          <div className="hd-panel">
 
-            <div className="h-drawer-top">
-              <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-                <div style={{
-                  position: "relative", width: 44, height: 44, flexShrink: 0,
-                  borderRadius: "50%", overflow: "hidden",
-                  border: `1.5px solid rgba(244,182,61,0.3)`,
-                  background: NAVY_DEEP,
-                }}>
+            <div className="hd-d-top">
+              <div className="hd-d-brand">
+                <span className="hd-logo">
                   <Image
                     src="/images/logo.jpeg"
-                    alt="Ceylon Compass Travels"
+                    alt=""
                     fill
-                    sizes="44px"
+                    sizes="46px"
                     style={{ objectFit: "cover", objectPosition: "center" }}
                   />
-                </div>
+                </span>
                 <div>
-                  <div style={{
-                    fontFamily: FONT_DISPLAY, fontWeight: 800,
-                    fontSize: 18, color: WHITE, letterSpacing: "-0.01em",
-                    lineHeight: 1.1,
-                  }}>
-                    Ceylon Compass Travels
-                  </div>
-                  <div style={{
-                    fontFamily: FONT_BODY, fontWeight: 500,
-                    fontSize: 12, color: GOLD_DIM, letterSpacing: "0.04em",
-                    marginTop: 3,
-                  }}>
-                    Travel Sri Lanka
-                  </div>
+                  <div className="hd-d-name">{BRAND}</div>
+                  <div className="hd-d-slogan">{SLOGAN}</div>
                 </div>
               </div>
-
-              <button
-                aria-label="Close menu"
-                style={{ background: "none", border: "none", color: WHITE_DIM, cursor: "pointer", flexShrink: 0 }}
-                onClick={() => setIsOpen(false)}
-              >
-                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <path d="M18 6L6 18M6 6l12 12"/>
+              <button type="button" className="hd-close" aria-label="Close menu" onClick={() => setIsOpen(false)} autoFocus>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" aria-hidden="true">
+                  <path d="M18 6L6 18M6 6l12 12" />
                 </svg>
               </button>
             </div>
 
-            <nav className="h-drawer-nav" aria-label="Mobile">
+            <nav className="hd-d-nav" aria-label="Mobile">
               {navLinks.map((link) => (
                 <Link
                   key={link.href}
                   href={link.href}
-                  className="h-drawer-link"
+                  className={`hd-d-link${isActive(link.href) ? " is-active" : ""}`}
+                  aria-current={isActive(link.href) ? "page" : undefined}
                   onClick={() => setIsOpen(false)}
                 >
-                  {link.label}
+                  <span className="hd-d-link-label">{link.label}</span>
+                  <svg className="hd-d-chev" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                    <path d="M9 6l6 6-6 6" />
+                  </svg>
                 </Link>
               ))}
             </nav>
 
-            <div className="h-drawer-bottom">
+            <div className="hd-d-bottom">
+              <a href={`tel:${PHONE.tel}`} className="hd-d-call">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                  <path d="M6.62 10.79a15.05 15.05 0 006.59 6.59l2.2-2.2a1 1 0 011.02-.24c1.12.37 2.33.57 3.57.57a1 1 0 011 1V20a1 1 0 01-1 1C10.61 21 3 13.39 3 4a1 1 0 011-1h3.5a1 1 0 011 1c0 1.25.2 2.45.57 3.57a1 1 0 01-.25 1.02l-2.2 2.2z" />
+                </svg>
+                Call {PHONE.display}
+              </a>
+
               <div>
-                <div className="h-drawer-chat-label" style={{ marginBottom: 10 }}>Message us directly</div>
-                <div className="h-drawer-chat">
+                <div className="hd-d-label">Or message us directly</div>
+                <div className="hd-d-chats">
                   {chatLinks.map((c) => (
                     <a
                       key={c.key}
@@ -434,22 +383,18 @@ export default function Header() {
                       href={c.href}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="h-chat-btn"
+                      className="hd-d-chat"
                       aria-label={c.label}
                     >
                       {c.icon}
+                      {c.short}
                     </a>
                   ))}
                 </div>
               </div>
 
-              <Link href="/reservation" className="h-book-btn" style={{
-                textAlign: "center", padding: "14px", borderRadius: 100,
-                fontFamily: FONT_BODY, fontSize: 16, fontWeight: 700,
-                letterSpacing: "0.01em",
-                color: "#10241f", textDecoration: "none",
-              }}>
-                Book Now
+              <Link href="/reservation" className="hd-book hd-d-book" onClick={() => setIsOpen(false)}>
+                Book now
               </Link>
             </div>
 

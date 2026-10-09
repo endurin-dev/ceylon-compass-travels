@@ -26,123 +26,126 @@ const MAX_JOURNEYS = 4;
 
 function ArrowIcon() {
   return (
-    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
       <path d="M5 12h14M13 6l6 6-6 6" />
     </svg>
   );
 }
 
-function PlaneIcon() {
+/* Route icon: works for every route, not only airport transfers */
+function RouteIcon() {
   return (
-    <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-      <path d="M21 16v-2l-8-5V3.5a1.5 1.5 0 0 0-3 0V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5L21 16Z" />
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <circle cx="6" cy="5" r="2.2" />
+      <circle cx="18" cy="19" r="2.2" />
+      <path d="M8.2 5H14a3.5 3.5 0 010 7h-4a3.5 3.5 0 000 7h5.8" />
     </svg>
   );
 }
 
 const STYLES = `
+  @import url('https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700;12..96,800&family=Figtree:wght@400;500;600;700&display=swap');
+
   .journeys-section {
-    position: relative;
-    overflow: hidden;
-    padding: 36px 5vw;
-    color: #fff;
-    background: #164b47 url('/images/banner.webp') center 43% / cover no-repeat;
-    font-family: var(--font-inter), sans-serif;
+    --h-ink:       #10241f;
+    --h-ink-faint: rgba(16,36,31,.66);
+    --h-teal:      #0b6b5a;
+    --h-teal-deep: #084c40;
+    --h-sun:       #f4b63d;
+    --h-sun-deep:  #e59d12;
+    --h-mint:      #7fe3c8;
+    --h-ease:      cubic-bezier(.25,.1,.25,1);
+
+    position: relative; overflow: hidden; padding: 56px 5vw 60px; color: #fff;
+    background: #084c40 url('/images/banner.webp') center 43% / cover no-repeat;
+    font-family: 'Figtree', system-ui, sans-serif;
   }
+  .journeys-section *, .journeys-section *::before, .journeys-section *::after { box-sizing: border-box; }
+  .journeys-section :focus-visible { outline: 3px solid var(--h-sun); outline-offset: 3px; border-radius: 12px; }
+  /* teal scrim: dark behind the copy, lets the photo show on the right */
   .journeys-section::before {
-    content: "";
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(90deg, rgba(9, 34, 34, .88) 0%, rgba(9, 34, 34, .67) 30%, rgba(9, 34, 34, .2) 100%);
+    content: ""; position: absolute; inset: 0; pointer-events: none;
+    background:
+      linear-gradient(90deg, rgba(6,40,34,.94) 0%, rgba(8,76,64,.8) 32%, rgba(8,76,64,.38) 100%),
+      linear-gradient(0deg, rgba(6,40,34,.35) 0%, transparent 40%);
   }
   .journeys-shell {
-    position: relative;
-    z-index: 1;
-    display: grid;
-    grid-template-columns: minmax(210px, .95fr) repeat(4, minmax(145px, 1fr));
-    gap: 12px;
-    align-items: center;
-    max-width: 1440px;
-    margin: 0 auto;
+    position: relative; z-index: 1; max-width: 1440px; margin: 0 auto;
+    display: grid; grid-template-columns: minmax(250px, 1fr) repeat(4, minmax(160px, 1fr)); gap: 16px; align-items: center;
   }
-  .journeys-copy { padding: 8px 12px 8px 0; }
-  .journeys-eyebrow {
-    display: block;
-    margin-bottom: 6px;
-    color: #f4c453;
-    font-size: 11px;
-    font-weight: 700;
-    letter-spacing: .16em;
-    text-transform: uppercase;
+
+  /* ── Copy ── */
+  .journeys-copy { padding: 4px 18px 4px 0; }
+  .journeys-kicker {
+    display: inline-block; margin-bottom: 14px; padding: 5px 14px; border-radius: 100px; font-size: 13.5px; font-weight: 600; color: #fff;
+    background: linear-gradient(135deg, rgba(255,255,255,.26), rgba(255,255,255,.08));
+    -webkit-backdrop-filter: blur(14px) saturate(180%); backdrop-filter: blur(14px) saturate(180%);
+    border: 1px solid rgba(255,255,255,.4); box-shadow: 0 6px 18px rgba(0,0,0,.18), inset 0 1.5px 0 rgba(255,255,255,.5);
   }
-  .journeys-title {
-    margin: 0 0 7px;
-    font-family: Georgia, serif;
-    font-size: clamp(27px, 2.7vw, 38px);
-    line-height: 1.05;
-    color: #fff;
-  }
-  .journeys-subtitle { margin: 0 0 15px; color: rgba(255,255,255,.88); font-size: 13px; line-height: 1.45; }
+  .journeys-title { margin: 0 0 8px; font-family: 'Bricolage Grotesque', sans-serif; font-size: clamp(30px, 3.2vw, 46px); font-weight: 800; letter-spacing: -.02em; line-height: 1.04; text-shadow: 0 2px 20px rgba(0,0,0,.3); }
+  .journeys-subtitle { margin: 0 0 20px; font-family: 'Bricolage Grotesque', sans-serif; font-size: clamp(16px, 1.5vw, 20px); font-weight: 600; line-height: 1.35; color: var(--h-mint); max-width: 28ch; text-shadow: 0 1px 12px rgba(0,0,0,.3); }
   .journeys-all {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    min-height: 38px;
-    padding: 0 15px;
-    border-radius: 20px;
-    background: #edb944;
-    color: #142d2c;
-    font-size: 12px;
-    font-weight: 700;
-    text-decoration: none;
-    transition: background .2s, gap .2s;
+    display: inline-flex; align-items: center; gap: 8px; height: 46px; padding: 0 22px; border-radius: 100px; font-size: 15px; font-weight: 700; text-decoration: none;
+    color: var(--h-ink); background: linear-gradient(180deg, #ffc858, var(--h-sun-deep)); box-shadow: 0 8px 18px rgba(229,157,18,.38), inset 0 1px 0 rgba(255,255,255,.55);
+    transition: transform .2s var(--h-ease), background .2s, gap .2s;
   }
-  .journeys-all:hover { gap: 12px; background: #ffd36f; }
+  .journeys-all:hover { gap: 12px; background: linear-gradient(180deg, #ffbf40, #d98f0a); transform: translateY(-2px); }
+
+  /* ── Route cards: frosted white, like the booking card ── */
   .journey-card {
-    min-width: 0;
-    padding: 7px;
-    border: 1px solid rgba(255,255,255,.75);
-    border-radius: 9px;
-    background: rgba(255,255,255,.96);
-    box-shadow: 0 8px 22px rgba(8,31,35,.18);
-    color: #18314a;
-    text-decoration: none;
-    transition: transform .2s, box-shadow .2s;
+    position: relative; min-width: 0; display: flex; flex-direction: column; padding: 7px 7px 14px; border-radius: 22px; text-decoration: none; color: var(--h-ink);
+    background: linear-gradient(135deg, rgba(255,255,255,.97), rgba(255,255,255,.88)); border: 1px solid rgba(255,255,255,.9);
+    box-shadow: 0 18px 40px rgba(2,24,20,.3), 0 3px 8px rgba(2,24,20,.12);
+    transition: transform .25s var(--h-ease), box-shadow .25s var(--h-ease);
   }
-  .journey-card:hover { transform: translateY(-3px); box-shadow: 0 12px 26px rgba(8,31,35,.26); }
-  .journey-image {
-    display: block;
-    width: 100%;
-    height: 66px;
-    margin-bottom: 8px;
-    border-radius: 6px;
-    background-image: url('/images/banner.webp');
-    background-size: cover;
-    background-position: center;
-  }
+  .journey-card:hover { transform: translateY(-5px); box-shadow: 0 26px 52px rgba(2,24,20,.38), 0 4px 10px rgba(2,24,20,.14); }
+  .journey-image { display: block; width: 100%; height: 84px; margin-bottom: 12px; border-radius: 16px; background-image: url('/images/banner.webp'); background-size: cover; background-position: center; }
   .journey-card:nth-child(2) .journey-image { background-position: 18% 55%; }
   .journey-card:nth-child(3) .journey-image { background-position: 43% 65%; }
   .journey-card:nth-child(4) .journey-image { background-position: 67% 48%; }
   .journey-card:nth-child(5) .journey-image { background-position: 88% 54%; }
-  .journey-route { display: flex; align-items: flex-start; gap: 5px; min-height: 32px; font-size: 11px; font-weight: 700; line-height: 1.35; }
-  .journey-route svg { flex: 0 0 auto; margin-top: 1px; color: #286a87; }
-  .journey-price { display: block; margin-top: 3px; font-size: 15px; font-weight: 800; line-height: 1.2; }
-  .journey-from { display: block; margin-top: 1px; color: #638099; font-size: 10px; }
-  .journeys-loading { grid-column: 2 / -1; min-height: 120px; }
-  @media (max-width: 1040px) {
-    .journeys-shell { grid-template-columns: repeat(4, minmax(150px, 1fr)); }
-    .journeys-copy { grid-column: 1 / -1; max-width: 480px; padding: 0 0 4px; }
-    .journeys-loading { grid-column: 1 / -1; }
+  .journey-body { display: flex; flex-direction: column; flex: 1; padding: 0 8px; }
+  .journey-route { display: flex; align-items: flex-start; gap: 8px; min-height: 42px; font-size: 14.5px; font-weight: 700; line-height: 1.35; }
+  .journey-route svg { flex: 0 0 auto; margin-top: 2px; color: var(--h-teal); }
+  .journey-foot { display: flex; align-items: flex-end; justify-content: space-between; gap: 10px; margin-top: 10px; padding-top: 10px; border-top: 1px solid rgba(16,36,31,.1); }
+  .journey-from { display: block; font-size: 13px; font-weight: 600; color: var(--h-ink-faint); line-height: 1.2; }
+  .journey-price { display: block; margin-top: 2px; font-family: 'Bricolage Grotesque', sans-serif; font-size: 28px; font-weight: 800; letter-spacing: -.02em; line-height: 1; color: var(--h-teal-deep); font-variant-numeric: tabular-nums; }
+  .journey-go {
+    flex-shrink: 0; width: 36px; height: 36px; border-radius: 50%; display: grid; place-items: center; color: #fff;
+    background: linear-gradient(180deg, #11806b, var(--h-teal-deep)); box-shadow: 0 6px 14px rgba(8,76,64,.35), inset 0 1px 0 rgba(255,255,255,.25);
+    transition: background .2s, transform .2s var(--h-ease);
+  }
+  .journey-card:hover .journey-go { background: linear-gradient(180deg, #ffc858, var(--h-sun-deep)); color: var(--h-ink); transform: translateX(2px); }
+
+  /* ── Loading placeholders ── */
+  .journey-skel {
+    height: 204px; border-radius: 22px; border: 1px solid rgba(255,255,255,.35);
+    background: linear-gradient(100deg, rgba(255,255,255,.14) 30%, rgba(255,255,255,.3) 50%, rgba(255,255,255,.14) 70%);
+    background-size: 200% 100%; animation: journey-shimmer 1.4s linear infinite;
+  }
+  @keyframes journey-shimmer { 0% { background-position: -200% 0; } 100% { background-position: 200% 0; } }
+
+  /* ── Responsive ── */
+  @media (max-width: 1100px) {
+    .journeys-shell { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+    .journeys-copy { grid-column: 1 / -1; padding: 0 0 6px; }
+  }
+  @media (max-width: 860px) {
+    .journeys-shell { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   }
   @media (max-width: 680px) {
-    .journeys-section { padding: 30px 0 32px 5vw; background-position: 44% center; }
-    .journeys-section::before { background: rgba(9, 34, 34, .72); }
-    .journeys-shell { grid-template-columns: repeat(4, minmax(155px, 1fr)); gap: 10px; padding-right: 5vw; overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: thin; }
-    .journeys-copy { grid-column: 1 / -1; }
-    .journey-card { scroll-snap-align: start; }
+    .journeys-section { padding: 44px 0 48px 5vw; background-position: 44% center; }
+    .journeys-section::before { background: linear-gradient(180deg, rgba(6,40,34,.9) 0%, rgba(8,76,64,.78) 100%); }
+    /* one swipeable row; the next card peeks in */
+    .journeys-shell { display: flex; flex-wrap: nowrap; gap: 12px; padding-right: 5vw; overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none; -webkit-overflow-scrolling: touch; align-items: stretch; }
+    .journeys-shell::-webkit-scrollbar { display: none; }
+    .journeys-copy { flex: 0 0 100%; padding: 0 5vw 8px 0; scroll-snap-align: start; }
+    .journey-card, .journey-skel { flex: 0 0 74%; scroll-snap-align: start; }
+    .journeys-all { width: 100%; justify-content: center; height: 50px; }
   }
   @media (prefers-reduced-motion: reduce) {
-    .journeys-all, .journey-card { transition: none; }
+    .journeys-all, .journey-card, .journey-go { transition: none; }
+    .journey-skel { animation: none; }
   }
 `;
 
@@ -186,18 +189,18 @@ export default function TopJourneys() {
   if (!loading && journeys.length === 0) return null;
 
   return (
-    <section className="journeys-section" aria-labelledby="journeys-heading">
+    <section className="journeys-section" aria-labelledby="journeys-heading" aria-busy={loading}>
       <style>{STYLES}</style>
       <div className="journeys-shell">
         <div className="journeys-copy">
-          <span className="journeys-eyebrow">Featured routes</span>
-          <h2 id="journeys-heading" className="journeys-title">Top Journeys</h2>
-          <p className="journeys-subtitle">Fixed fares for routes across Sri Lanka.</p>
-          <Link href="/rates" className="journeys-all">View All Routes <ArrowIcon /></Link>
+          <span className="journeys-kicker">Featured routes</span>
+          <h2 id="journeys-heading" className="journeys-title">Top journeys</h2>
+          <p className="journeys-subtitle">Fixed fares for popular routes across Sri Lanka.</p>
+          <Link href="/rates" className="journeys-all">View all routes <ArrowIcon /></Link>
         </div>
 
         {loading ? (
-          <div className="journeys-loading" aria-label="Loading popular routes" />
+          [0, 1, 2, 3].map((i) => <div key={i} className="journey-skel" aria-hidden="true" />)
         ) : journeys.map((journey) => {
           const params = new URLSearchParams({
             from: journey.fromLocId,
@@ -210,9 +213,16 @@ export default function TopJourneys() {
           return (
             <Link key={`${journey.fromLocId}-${journey.toLocId}`} href={`/reservation?${params.toString()}`} className="journey-card">
               <span className="journey-image" aria-hidden="true" />
-              <span className="journey-route"><PlaneIcon />{journey.from} → {journey.to}</span>
-              <span className="journey-price">{CURRENCY}{journey.price}</span>
-              <span className="journey-from">From</span>
+              <span className="journey-body">
+                <span className="journey-route"><RouteIcon />{journey.from} → {journey.to}</span>
+                <span className="journey-foot">
+                  <span>
+                    <span className="journey-from">From</span>
+                    <span className="journey-price">{CURRENCY}{journey.price}</span>
+                  </span>
+                  <span className="journey-go" aria-hidden="true"><ArrowIcon /></span>
+                </span>
+              </span>
             </Link>
           );
         })}
