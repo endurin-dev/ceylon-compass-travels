@@ -172,7 +172,7 @@ export default function Dashboard({ onLogout }: { onLogout: () => void }) {
     { id:"vehicles",   label:"Vehicles",    icon:"M9 17a2 2 0 11-4 0 2 2 0 014 0zM19 17a2 2 0 11-4 0 2 2 0 014 0zM13 16V6a1 1 0 00-1-1H4a1 1 0 00-1 1v10a1 1 0 001 1h1m8-1a1 1 0 01-1 1H9m4-1V8a1 1 0 011-1h2.586a1 1 0 01.707.293l3.414 3.414a1 1 0 01.293.707V16a1 1 0 01-1 1h-1" },
     { id:"features",   label:"Features",    icon:"M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" },
     { id:"rates",      label:"Rates",       icon:"M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" },
-    { id:"events",   label:"Events",   icon:"M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" },
+    // { id:"events",   label:"Events",   icon:"M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" },
     { id:"promo-codes", label:"Promo Codes", icon:"M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" },
     { id:"settings",   label:"Settings",    icon:"M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065zM15 12a3 3 0 11-6 0 3 3 0 016 0z" },
   ];
@@ -221,10 +221,6 @@ export default function Dashboard({ onLogout }: { onLogout: () => void }) {
         {toast && <Toast msg={toast.msg} type={toast.type} />}
 
         <aside className="db-side">
-          <div className="slogo" style={{ padding:"18px 16px 14px", borderBottom:"1px solid rgba(255,255,255,.07)" }}>
-            <div style={{ fontSize:15, fontWeight:800, color:"#f5f0e8" }}>Paris <span style={{ color:"#c9a347" }}>Easy</span> Move</div>
-            <div style={{ fontSize:9, color:"rgba(255,255,255,.25)", letterSpacing:".14em", textTransform:"uppercase", marginTop:2 }}>Admin Panel</div>
-          </div>
           <nav style={{ padding:"10px 0", flex:1 }}>
             <div className="nlabel" style={{ fontSize:9, fontWeight:700, color:"rgba(255,255,255,.2)", letterSpacing:".14em", textTransform:"uppercase", padding:"6px 20px 4px" }}>Management</div>
             {NAV.map(n => (
@@ -270,7 +266,7 @@ export default function Dashboard({ onLogout }: { onLogout: () => void }) {
             {loaded && tab === "vehicles"   && <VehiclesTab   vehicles={vehicles} setVehicles={setVehicles} showToast={showToast} />}
             {loaded && tab === "features"   && <FeaturesTab   features={features} setFeatures={setFeatures} showToast={showToast} />}
             {loaded && tab === "rates"      && <RatesTab rates={rates} setRates={setRates} locations={locations} vehicles={vehicles} showToast={showToast} />}
-            {loaded && tab === "events"   && <EventsTab />}
+            {/* {loaded && tab === "events"   && <EventsTab />} */}
             {loaded && tab === "promo-codes" && <PromoCodesTab promoCodes={promoCodes} setPromoCodes={setPromoCodes} showToast={showToast} />}
             {loaded && tab === "settings"   && <SettingsTab   showToast={showToast} />}
           </div>
@@ -599,7 +595,7 @@ function OverviewTab({ bookings, locations, vehicles, rates, features, categorie
                       {isRoundTrip && <span style={{ marginLeft:6, fontSize:10, background:"#fff7ed", color:"#ea580c", padding:"1px 6px", borderRadius:4, fontWeight:700 }}>RT</span>}
                     </td>
                     <td style={{ fontSize:12 }}>{b.date} {b.time}</td>
-                    <td><Chip color={sc[b.status]}>{b.status}</Chip></td>
+                    <td><Chip color={sc[b.status] ?? "gray"}>{b.status || "Unknown"}</Chip></td>
                   </tr>
                 );
               })}
@@ -624,6 +620,10 @@ function BookingsTab({ bookings, setBookings, vehicles, rates, showToast }: { bo
     confirmed: { chip:"green",  label:"Confirmed", icon:"✅", bg:"#f0fdf4", bar:"#16a34a" },
     cancelled: { chip:"red",    label:"Cancelled", icon:"❌", bg:"#fef2f2", bar:"#dc2626" },
   };
+  const statusStyle = (status: string | undefined) =>
+    sc[status ?? ""] ?? {
+      chip:"gray", label:status || "Unknown", icon:"⚠️", bg:"#f3f4f6", bar:"#9ca3af",
+    };
 
   const vName  = (id: string) => vehicles.find(v => v.id === id)?.name ?? id;
   const vModel = (id: string) => vehicles.find(v => v.id === id)?.model ?? "";
@@ -716,7 +716,7 @@ function BookingsTab({ bookings, setBookings, vehicles, rates, showToast }: { bo
                 </td></tr>
               )}
               {rows.map(b => {
-                const s = sc[b.status];
+                const s = statusStyle(b.status);
                 const price = getPrice(b);
                 const { isRoundTrip } = parseNotes(b.notes ?? "");
                 return (
@@ -775,7 +775,7 @@ function BookingsTab({ bookings, setBookings, vehicles, rates, showToast }: { bo
 
       {/* ── BOOKING DETAIL MODAL ── */}
       {sel && (() => {
-        const s    = sc[sel.status];
+        const s    = statusStyle(sel.status);
         const price = getPrice(sel);
         const veh   = vehicles.find(v => v.id === sel.vehicleId);
         const totalPax = sel.passengers + sel.kids;

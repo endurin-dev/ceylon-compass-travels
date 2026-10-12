@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-// @ts-expect-error CSS side-effect imports are handled by the Next.js bundler.
 import "./globals.css";
 import { Inter, Montserrat } from "next/font/google";
 import Header from "@/components/Header";
