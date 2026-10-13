@@ -297,7 +297,7 @@ function buildCustomerEmail(data: BookingEmailData): string {
           <td>
             <div style="font-size:11px;font-weight:700;letter-spacing:0.15em;text-transform:uppercase;color:#c9a347;margin-bottom:10px;">Need to Modify Your Booking?</div>
             <div style="font-size:13px;color:rgba(245,240,232,0.5);line-height:1.9;">
-              📧 <a href="mailto:booking@ceyloncompasstravels.com" style="color:#c9a347;text-decoration:none;">booking@ceyloncompasstravels.com</a><br/>
+              📧 <a href="mailto:info.ceyloncompasstravels@gmail.com" style="color:#c9a347;text-decoration:none;">info.ceyloncompasstravels@gmail.com</a><br/>
               📞 <a href="tel:+33652466694" style="color:#c9a347;text-decoration:none;">+33 6 52 46 66 94</a>
             </div>
           </td>
@@ -527,7 +527,7 @@ function buildAdminEmail(data: BookingEmailData): string {
 
   <!-- ═══ FOOTER ═══ -->
   <tr><td style="padding:20px 0 0;text-align:center;">
-    <p style="margin:0;font-size:11px;color:#9ca3af;">Ceylon Compass Travels Admin System &nbsp;·&nbsp; booking@ceyloncompasstravels.com &nbsp;·&nbsp; Ref: <strong>${bookingRef}</strong></p>
+    <p style="margin:0;font-size:11px;color:#9ca3af;">Ceylon Compass Travels Admin System &nbsp;·&nbsp; info.ceyloncompasstravels@gmail.com &nbsp;·&nbsp; Ref: <strong>${bookingRef}</strong></p>
   </td></tr>
 
 </table>
@@ -555,7 +555,7 @@ export async function POST(req: NextRequest) {
     const customerHtml = buildCustomerEmail(data);
     const adminHtml    = buildAdminEmail(data);
 
-    const adminTo  = process.env.ADMIN_EMAIL ?? "booking@ceyloncompasstravels.com";
+    const adminTo  = process.env.ADMIN_EMAIL ?? "info.ceyloncompasstravels@gmail.com";
     const fromAddr = process.env.EMAIL_FROM  ?? "noreply@ceyloncompasstravels.com";
 
     const customerSubject = `✅ Booking Confirmed — ${data.fromName} → ${data.toName} · Ref: ${data.bookingRef}`;

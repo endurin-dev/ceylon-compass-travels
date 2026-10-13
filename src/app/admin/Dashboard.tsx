@@ -1338,7 +1338,7 @@ function FeaturesTab({ features, setFeatures, showToast }: { features:Feature[];
 // ════════════════════════════════════════════════════════════════
 function SettingsTab({ showToast }: { showToast:any }) {
   const [pw, setPw] = useState({ cur:"", nw:"", cf:"" });
-  const [co, setCo] = useState({ name:"Ceylon Compass Travels", phone:"+33 6 52 46 66 94", email:"booking@ceyloncompasstravels.com", address:"10 rue Pierre Sarrazin, 95190 Goussainville" });
+  const [co, setCo] = useState({ name:"Ceylon Compass Travels", phone:"+33 6 52 46 66 94", email:"info.ceyloncompasstravels@gmail.com", address:"10 rue Pierre Sarrazin, 95190 Goussainville" });
 
   // ── Backup state ──────────────────────────────────────────────
   type BackupStatus = "idle"|"loading"|"success"|"error";

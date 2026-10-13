@@ -33,7 +33,7 @@ export async function POST(request) {
 
     await resend.emails.send({
       from: 'Ceylon Compass Travels <noreply@ceyloncompasstravels.com>',
-      to: 'booking@ceyloncompasstravels.com',
+      to: 'info.ceyloncompasstravels@gmail.com',
       replyTo: email,
       subject: `[${subjectLabel}] New message from ${firstName} ${lastName}`,
       html: `
