@@ -1,15 +1,21 @@
 import { Resend } from 'resend';
 
-const resend = process.env.RESEND_API_KEY ? new Resend(process.env.RESEND_API_KEY) : null;
+const isEmail = (value) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(value || '').trim());
 
 export async function POST(request) {
   try {
-    if (!resend) {
+    const apiKey = process.env.RESEND_API_KEY;
+    const adminEmail = (process.env.ADMIN_EMAIL || 'info.ceyloncompasstravels@gmail.com').trim();
+    const fromAddress = (process.env.EMAIL_FROM || process.env.RESEND_FROM || 'onboarding@resend.dev').trim();
+
+    if (!apiKey) {
       return Response.json(
-        { error: 'Email service is not configured. Please set RESEND_API_KEY.' },
+        { error: 'Email service is not configured. Please set RESEND_API_KEY in your environment.' },
         { status: 500 }
       );
     }
+
+    const resend = new Resend(apiKey);
 
     const body = await request.json();
     const { firstName, lastName, email, phone, subject, message } = body;
@@ -19,6 +25,13 @@ export async function POST(request) {
       return Response.json(
         { error: 'First name, email and message are required.' },
         { status: 400 }
+      );
+    }
+
+    if (!isEmail(email) || !isEmail(adminEmail)) {
+      return Response.json(
+        { error: 'Invalid email address configured for sending.' },
+        { status: 500 }
       );
     }
 
@@ -32,8 +45,8 @@ export async function POST(request) {
     const subjectLabel = subjectLabels[subject] || subject || 'Contact Form';
 
     await resend.emails.send({
-      from: 'Ceylon Compass Travels <noreply@ceyloncompasstravels.com>',
-      to: 'info.ceyloncompasstravels@gmail.com',
+      from: `Ceylon Compass Travels <${fromAddress}>`,
+      to: adminEmail,
       replyTo: email,
       subject: `[${subjectLabel}] New message from ${firstName} ${lastName}`,
       html: `

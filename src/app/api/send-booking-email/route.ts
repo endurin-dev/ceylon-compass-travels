@@ -538,6 +538,8 @@ function buildAdminEmail(data: BookingEmailData): string {
 </html>`;
 }
 
+const isValidEmail = (value: string): boolean => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value.trim());
+
 // ─── ROUTE HANDLER ────────────────────────────────────────────────────────────
 export async function POST(req: NextRequest) {
   try {
@@ -552,14 +554,36 @@ export async function POST(req: NextRequest) {
       );
     }
 
+    if (!isValidEmail(data.email)) {
+      return NextResponse.json(
+        { ok: false, error: "Customer email is invalid." },
+        { status: 400 }
+      );
+    }
+
     const customerHtml = buildCustomerEmail(data);
     const adminHtml    = buildAdminEmail(data);
 
-    const adminTo  = process.env.ADMIN_EMAIL ?? "info.ceyloncompasstravels@gmail.com";
-    const fromAddr = process.env.EMAIL_FROM  ?? "noreply@ceyloncompasstravels.com";
+    const adminTo  = (process.env.ADMIN_EMAIL ?? "info.ceyloncompasstravels@gmail.com").trim();
+    const fromAddr = (process.env.EMAIL_FROM ?? process.env.RESEND_FROM ?? "onboarding@resend.dev").trim();
+
+    if (!isValidEmail(adminTo) || !isValidEmail(fromAddr)) {
+      return NextResponse.json(
+        { ok: false, error: "Missing or invalid sender/recipient email configuration. Set ADMIN_EMAIL and EMAIL_FROM to valid addresses or verify the Resend sender domain." },
+        { status: 500 }
+      );
+    }
 
     const customerSubject = `✅ Booking Confirmed — ${data.fromName} → ${data.toName} · Ref: ${data.bookingRef}`;
     const adminSubject    = `🚖 New Booking: ${data.name} — ${data.fromName} → ${data.toName} · ${data.date} ${data.time} · ${data.bookingRef}`;
+
+    if (!process.env.RESEND_API_KEY) {
+      console.error("[send-booking-email] RESEND_API_KEY is missing. Add it in your environment and verify the sender domain before sending emails.");
+      return NextResponse.json(
+        { ok: false, error: "RESEND_API_KEY is missing. Add it to the environment and verify the sender email/domain in Resend." },
+        { status: 500 }
+      );
+    }
 
     // ── OPTION A: Resend ──────────────────────────────────────────────────────
     if (process.env.RESEND_API_KEY) {
