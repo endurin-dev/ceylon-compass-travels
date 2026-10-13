@@ -48,11 +48,6 @@ export default function ContactUs() {
 
       if (!res.ok) throw new Error(data.error || "Something went wrong.");
 
-      // GTM dataLayer push
-      if (typeof window !== "undefined" && (window as any).dataLayer) {
-        (window as any).dataLayer.push({ event: "generate_lead" });
-      }
-
       setStatus("success");
       setForm({ firstName: "", lastName: "", email: "", phone: "", subject: "", message: "" });
     } catch (err) {

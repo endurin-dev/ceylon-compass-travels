@@ -420,9 +420,6 @@ export default function ReservationPage() {
         } catch (emailErr) {
           console.error("Quote email send failed:", emailErr);
         }
-        const dataLayer = (window as any).dataLayer || [];
-        (window as any).dataLayer = dataLayer;
-        dataLayer.push({ event: "quote_requested", booking_id: ref, value: 0, currency: CURRENCY_CODE });
         setBookingRef(ref);
         setDone(true);
         return;
@@ -495,9 +492,6 @@ export default function ReservationPage() {
         } catch (emailErr) {
           console.error("Email send failed:", emailErr);
         }
-        const dataLayer = (window as any).dataLayer || [];
-        (window as any).dataLayer = dataLayer;
-        dataLayer.push({ event: "booking_confirmed", booking_id: ref, value: finalPrice, currency: CURRENCY_CODE });
         setDone(true);
       } else {
         alert("Something went wrong saving your booking. Please try again.");

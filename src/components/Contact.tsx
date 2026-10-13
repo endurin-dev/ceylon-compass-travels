@@ -1,17 +1,6 @@
 "use client";
 
 export default function Contact() {
-const handlePhoneClick = () => {
-  // ── Google Ads: Generate Lead (phone click) ──
-  const dataLayer = (window as any).dataLayer || [];
-  (window as any).dataLayer = dataLayer;
-
-  dataLayer.push({
-    event: "generate_lead",
-  });
-  // ── End Google Ads ───────────────────────────
-};
-
   return (
     <section className="bg-navy text-white">
       <div className="max-w-5xl mx-auto px-6 text-center">
@@ -35,11 +24,9 @@ const handlePhoneClick = () => {
           </a>.
         </p>
 
-        {/* ── Phone number fires generate_lead on click ── */}
         <a
           href="tel:+33652466694"
           className="text-4xl md:text-5xl font-bold text-gold hover:text-gold-light transition block mb-12"
-          onClick={handlePhoneClick}
         >
           +33 6 52 46 66 94
         </a>
