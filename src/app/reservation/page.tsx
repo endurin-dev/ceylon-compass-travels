@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 
 /* Keep these identical to the hero + rates components */
 const CURRENCY      = "$";     // must match the currency stored in /api/rates
@@ -159,6 +159,7 @@ export default function ReservationPage() {
   const [dataReady,setDataReady] = useState(false);
 
   const [step,     setStep]      = useState(0);
+  const stepHeadingRef = useRef<HTMLElement>(null);
   const [trip,     setTrip]      = useState<TripDetails>({
     fromId:"",toId:"",fromName:"",toName:"",tripType:"one-way",
     date:"",time:"",returnDate:"",returnTime:"",
@@ -271,6 +272,13 @@ export default function ReservationPage() {
     if (vehicleId&&trip.fromId&&trip.toId&&!vehiclesWithPrice.some(v=>v.id===vehicleId)) setVehicleId("");
   }, [trip.fromId,trip.toId]);
 
+  const previousStep = useRef(step);
+  useEffect(() => {
+    if (previousStep.current === step) return;
+    previousStep.current = step;
+    stepHeadingRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+  }, [step]);
+
   const setFrom = (id:string) => { const l=locations.find(x=>x.id===id); setTrip(t=>({...t,fromId:id,fromName:l?.name??"",flightOrTrain:"",dropoffAddress:""})); setVehicleId(""); };
   const setTo   = (id:string) => { const l=locations.find(x=>x.id===id); setTrip(t=>({...t,toId:id,toName:l?.name??"",flightOrTrain:"",dropoffAddress:""})); setVehicleId(""); };
 
@@ -324,9 +332,8 @@ export default function ReservationPage() {
     return Object.keys(e).length===0;
   };
 
-  const scrollToTop = () => { window.scrollTo({ top: 0, behavior: "smooth" }); };
-  const next = () => { if (validate()) { setStep(s=>s+1); scrollToTop(); } };
-  const back = () => { setStep(s=>s-1); setErrors({}); scrollToTop(); };
+  const next = () => { if (validate()) setStep(s=>s+1); };
+  const back = () => { setStep(s=>s-1); setErrors({}); };
 
   const applyPromoCode = async () => {
     const trimmed = promoCodeInput.trim();
@@ -560,7 +567,7 @@ export default function ReservationPage() {
     <div className="tx"><Styles/>
       <div className="wrap">
         <main className="main">
-          <header className="head">
+          <header className="head" ref={stepHeadingRef}>
             <ol className="steps" aria-label="Progress">
               {STEPS.map((s,i)=>(
                 <li key={s} className={i===step?"on":i<step?"ok":""} aria-current={i===step?"step":undefined}>
@@ -905,7 +912,7 @@ function Styles() {
 @media(min-width:1280px){.wrap{grid-template-columns:minmax(0,1fr) 360px;gap:36px}}
 
 /* ── Heading + stepper ── */
-.head{margin-bottom:16px;animation:rise .7s var(--ease) both}
+.head{margin-bottom:16px;scroll-margin-top:104px;animation:rise .7s var(--ease) both}
 @keyframes rise{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
 .head h1{font-family:'Bricolage Grotesque',sans-serif;font-size:clamp(26px,4.2vw,40px);line-height:1.1;font-weight:800;letter-spacing:-.02em}
 .steps{list-style:none;display:flex;gap:6px;margin:0 0 16px;padding:0}
